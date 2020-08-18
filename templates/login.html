@@ -1,0 +1,12 @@
+{{ define "title" }}
+{{ .title }}
+{{ end }}
+
+{{ define "content" }}
+<form action="/auth/login" method="POST">
+        <input type="text" name="login" placeholder="Username or Email" value="">
+        <input type="password" name="password" placeholder="Password" value="">
+        <label>Remember Me</label><input type="checkbox" name="rememberMe">
+        <input type="submit" name="submit" value="Submit">
+</form>
+{{ end }}

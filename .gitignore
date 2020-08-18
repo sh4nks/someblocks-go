@@ -1,0 +1,24 @@
+# Editor files
+*.sublime-workspace
+*.sublime-project
+.vscode
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
