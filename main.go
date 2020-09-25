@@ -1,62 +1,48 @@
 package main
 
 import (
-	"github.com/foolin/goview"
-	"github.com/foolin/goview/supports/ginview"
-	"github.com/gin-gonic/gin"
-	"peterjustin.com/website/modules/auth"
-	"peterjustin.com/website/modules/page"
+	//"github.com/foolin/goview"
+	//"github.com/gin-gonic/gin"
+	"net/http"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"someblocks/core"
+	//"someblocks/controllers/blog"
+	"someblocks/controllers/page"
 )
 
 
 
-func Routes() *gin.Engine {
+func Routes() http.Handler {
 
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.Use(gin.Recovery())
-
-	router.HTMLRender = ginview.New(goview.Config{
-		Root: "templates",
-		Extension: ".html",
-		Master: "layout",
-		// if cache disabled, auto reload template file for debug.
-		DisableCache: true,
-	})
-
-	router.Static("/static", "./assets")
-
-	pageRouter := router.Group("/")
-	pageRouter.GET("/", page.IndexView)
-	pageRouter.GET("/p/:pageName", page.PageView)
-
-	authRouter := router.Group("/auth")
-	authRouter.POST("/login", auth.LoginPost)
-	authRouter.GET("/login", auth.Login)
-	authRouter.POST("/logout")
-	authRouter.GET("/register")
-	authRouter.POST("/register")
-
-	blogRouter := router.Group("/blog")
-	blogRouter.GET("/")
+    // Initialise our app-wide environment with the services/info we need.
+    appCtx := &handler.AppContext{
+    	Test: "TEST",
+        //DB: db,
+        //Port: os.Getenv("PORT"),
+        //Host: os.Getenv("HOST"),
+        // We might also have a custom log.Logger, our
+        // template instance, and a config struct as fields
+        // in our Env struct.
+    }
 
 
+	router := chi.NewRouter()
+	router.Use(
+		middleware.RequestID,
+		middleware.Logger,
+		middleware.RedirectSlashes,
+		middleware.Recoverer,
+	)
 
-	//router := chi.NewRouter()
-	//router.Use(
-	//	middleware.RequestID,
-	//	middleware.Logger,
-	//	middleware.RedirectSlashes,
-	//	middleware.Recoverer,
-	//)
+	router.Get("/", handler.AppHandleFunc(appCtx, page.Index))
+	//router.Get("/page/{pageID}", page.ViewPage)
 
-	//router.Route("/", func(r chi.Router) {
-	//	r.Mount("/", page.Routes())
-	//	r.Mount("/auth", auth.Routes())
-	//	r.Mount("/admin", admin.Routes())
-	//	r.Mount("/blog", blog.Routes())
-	//})
+	//router.Get("/blog", blog.Index)
+	//router.Get("/blog/{blogID}", blog.ViewPost)
 
+	//router.Get("/auth/login", auth.Login)
+	//router.Post("/auth/logout", auth.Logout)
 	return router
 }
 
@@ -64,5 +50,6 @@ func Routes() *gin.Engine {
 
 func main() {
 	router := Routes()
-	router.Run("127.0.0.1:8080")
+	//router.Run("127.0.0.1:8080")
+	http.ListenAndServe(":3333", router)
 }

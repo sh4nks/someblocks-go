@@ -1,11 +1,5 @@
 package auth
 
-import (
-	"log"
-
-	"github.com/gin-gonic/gin"
-)
-
 type LoginForm struct {
 	Login      string `form:"login" binding:"required"`
 	Password   string `form:"password" binding:"required"`
@@ -19,6 +13,7 @@ type RegisterForm struct {
 	confirmPassword string
 }
 
+/*
 func Login(ctx *gin.Context) {
 	ctx.HTML(200, "login", gin.H{
 		"title": "Login",
@@ -37,3 +32,4 @@ func LoginPost(ctx *gin.Context) {
 		log.Println(login.RememberMe)
 	}
 }
+*/

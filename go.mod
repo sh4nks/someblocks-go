@@ -1,8 +1,8 @@
-module peterjustin.com/website
+module someblocks
 
 go 1.15
 
 require (
-	github.com/foolin/goview v0.3.0
-	github.com/gin-gonic/gin v1.4.0
+	github.com/go-chi/chi v4.1.2+incompatible
+	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
 )
