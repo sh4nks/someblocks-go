@@ -1,15 +1,14 @@
 package page
 
 import (
-	"net/http"
 	"github.com/go-chi/chi"
+	"net/http"
 	"someblocks/core"
 )
 
-
-func Index(appCtx *handler.AppContext, w http.ResponseWriter, r *http.Request) {
+func Index(appCtx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte(appCtx.Test));
+	w.Write([]byte(appCtx.Test))
 }
 
 func ViewPage(w http.ResponseWriter, r *http.Request) {
@@ -18,5 +17,5 @@ func ViewPage(w http.ResponseWriter, r *http.Request) {
 	//	"Body": "Mah body is dat",
 	//})
 	pageID := chi.URLParam(r, "pageID")
-	w.Write([]byte(pageID));
+	w.Write([]byte(pageID))
 }

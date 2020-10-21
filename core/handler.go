@@ -1,4 +1,4 @@
-package handler
+package core
 
 import (
 	"database/sql"
@@ -66,11 +66,7 @@ func (h AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Wraps the request handler and returns a http.Handle friendly function
 func AppHandleFunc(appCtx *AppContext, f func(*AppContext, http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-  return func(w http.ResponseWriter, r *http.Request) {
-    f(appCtx, w, r)
-    fmt.Println("Wrapped function call")
-  }
+	return func(w http.ResponseWriter, r *http.Request) {
+		f(appCtx, w, r)
+	}
 }
-
-
-// router.Get("/index", AppHandleFunc(appCtx, page.Index))

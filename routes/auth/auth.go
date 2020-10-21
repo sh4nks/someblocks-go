@@ -3,7 +3,7 @@ package auth
 type LoginForm struct {
 	Login      string `form:"login" binding:"required"`
 	Password   string `form:"password" binding:"required"`
-	RememberMe string    `form:"rememberMe"`
+	RememberMe string `form:"rememberMe"`
 }
 
 type RegisterForm struct {
