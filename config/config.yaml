@@ -1,0 +1,9 @@
+database:
+  driver: sqlite3
+  database: someblocks.sqlite
+  username: ''
+  password: ''
+
+logfile: 'test'
+port: 8000
+host: '127.0.0.1'

@@ -1,10 +1,10 @@
 package core
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/jmoiron/sqlx"
 )
 
 // Error represents a handler error. It provides methods for a HTTP status
@@ -32,7 +32,7 @@ func (se StatusError) Status() int {
 
 // A (simple) example of our application-wide configuration.
 type AppContext struct {
-	DB   *sql.DB
+	DB   *sqlx.DB
 	Port string
 	Host string
 	Test string
