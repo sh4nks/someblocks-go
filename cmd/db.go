@@ -14,12 +14,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func main() {
-
-}
-
 func runMigrations() {
-	fmt.Println("Running migrations...")
+	log.Println("Running migrations...")
 	dir, _ := os.Getwd()
 	dbPath := filepath.Join(dir, "sqlite3.db")
 	dbMigrationsPath := filepath.Join(dir, "migrations", "sqlite3")

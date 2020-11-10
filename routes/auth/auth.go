@@ -33,7 +33,6 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(pageID))
 }
 
-
 /*
 func Login(ctx *gin.Context) {
 	ctx.HTML(200, "login", gin.H{
