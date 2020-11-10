@@ -25,3 +25,6 @@ someblocks
 *.out
 
 PRIVATE_NOTES
+*.db
+*.sqlite
+
