@@ -68,13 +68,13 @@ func serverCmd() *cobra.Command {
 		Use:   "server",
 		Short: "Runs the webserver",
 		Run: func(cmd *cobra.Command, args []string) {
-			runServer(viper.GetString("host"), viper.GetInt("port"))
+			runServer(viper.GetString("web.host"), viper.GetInt("web.port"))
 		},
 	}
 
 	srvCmd.PersistentFlags().IntP("port", "", 8080, "The port to bind to")
 	srvCmd.PersistentFlags().StringP("host", "", "127.0.0.1", "The address to bind to")
-	viper.BindPFlag("port", srvCmd.PersistentFlags().Lookup("port"))
-	viper.BindPFlag("host", srvCmd.PersistentFlags().Lookup("host"))
+	viper.BindPFlag("web.port", srvCmd.PersistentFlags().Lookup("port"))
+	viper.BindPFlag("web.host", srvCmd.PersistentFlags().Lookup("host"))
 	return srvCmd
 }
