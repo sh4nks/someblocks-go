@@ -30,7 +30,9 @@ func Init() {
 
 type Database struct {
 	Driver   string `mapstructure:"driver"`
-	Database string `mapstructure:"database"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Dbname   string `mapstructure:"dbname"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
@@ -49,7 +51,7 @@ type Config struct {
 var Cfg = &Config{
 	Database: Database{
 		Driver:   "sqlite3",
-		Database: "someblocks.sqlite",
+		Dbname: "someblocks.sqlite",
 		Username: "",
 		Password: "",
 	},
