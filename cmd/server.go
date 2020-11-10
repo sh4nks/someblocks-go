@@ -14,15 +14,60 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	_ "github.com/lib/pq"
 )
 
+func SetupDb(drivername string) (*sqlx.DB, error) {
+	if drivername == "sqlite3" {
+		dir, _ := os.Getwd()
+		dir = filepath.Clean(filepath.Join(dir, ".."))
+		connStr := filepath.Join(dir, viper.GetString("database.dbname"))
+
+		log.Printf("Using sqlite3 db with following connection string: %s", connStr)
+
+		db, err := sqlx.Open("sqlite3", connStr)
+
+		if err != nil {
+			return nil, fmt.Errorf("Couldn't open sqlite3 database")
+		}
+
+		return db, nil
+	} else if drivername == "postgres" {
+		password := ""
+		if viper.GetString("database.password") != "" {
+			password = fmt.Sprintf("password=%s", viper.GetString("database.password"))
+		}
+
+		host := viper.GetString("database.host")
+		port := viper.GetInt("database.port")
+		dbname := viper.GetString("database.dbname")
+		user := viper.GetString("database.username")
+
+		connStr := fmt.Sprintf(
+			"host=%s port=%d user=%s %s dbname=%s sslmode=disable",
+			host, port, user, password, dbname,
+		)
+
+		log.Printf("Using postgres db with following connection string: %s", connStr)
+
+		db, err := sqlx.Open("postgres", connStr)
+
+		if err != nil {
+			return nil, fmt.Errorf("Couldn't connect to postgres database", err)
+		}
+
+		return db, nil
+	}
+
+	return nil, fmt.Errorf("%s is not supported", drivername)
+}
+
 func CreateApp() http.Handler {
-	dir, _ := os.Getwd()
-	dir = filepath.Clean(filepath.Join(dir, ".."))
-	db, err := sqlx.Open("sqlite3", filepath.Join(dir, "sqlite3.db"))
+
+	db, err := SetupDb(viper.GetString("database.driver"))
 
 	if err != nil {
-		log.Fatal("Couldn't open sqlite database")
+		log.Fatal(err)
 	}
 
 	// Initialise our app-wide environment with the services/info we need.
