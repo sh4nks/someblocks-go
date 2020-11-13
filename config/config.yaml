@@ -1,8 +1,8 @@
 database:
-  driver: postgres
+  driver: sqlite3
   host: localhost
   port: 5432
-  dbname: someblocks
+  dbname: someblocks.sqlite
   username: 'peter'
   password: ''
 

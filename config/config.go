@@ -106,5 +106,5 @@ func Load(cfgFile string) {
 	if err := viper.Unmarshal(Cfg); err != nil {
 		log.Fatal("Couldn't unmarshal viper config into Cfg", err)
 	}
-	log.Printf("Config: %v", Cfg)
+	//log.Printf("Config: %v", Cfg)
 }

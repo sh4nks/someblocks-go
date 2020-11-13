@@ -4,31 +4,27 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"path/filepath"
 	"someblocks/core"
-	"someblocks/routes/page"
 
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	_ "github.com/lib/pq"
 )
 
+
 func SetupDb(drivername string) (*sqlx.DB, error) {
-	if drivername == "sqlite3" {
-		dir, _ := os.Getwd()
-		dir = filepath.Clean(filepath.Join(dir, ".."))
+	if drivername == "sqlite3" || drivername == "sqlite" {
+		dir := core.GetAppDir()
 		connStr := filepath.Join(dir, viper.GetString("database.dbname"))
 
-		log.Printf("Using sqlite3 db with following connection string: %s", connStr)
+		log.Printf("Using sqlite3 with following connection string: %s", connStr)
 
 		db, err := sqlx.Open("sqlite3", connStr)
 
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't open sqlite3 database")
+			return nil, fmt.Errorf("Couldn't open sqlite3 database: %s", err)
 		}
 
 		return db, nil
@@ -48,12 +44,21 @@ func SetupDb(drivername string) (*sqlx.DB, error) {
 			host, port, user, password, dbname,
 		)
 
-		log.Printf("Using postgres db with following connection string: %s", connStr)
+		var redactedStr string
+		if password != "" {
+			redactedStr = fmt.Sprintf(
+				"host=%s port=%d user=%s password=***** dbname=%s sslmode=disable",
+				host, port, user, dbname,
+			)
+		} else {
+			redactedStr = connStr
+		}
+		log.Printf("Using postgres with following connection string: %s", redactedStr)
 
-		db, err := sqlx.Open("postgres", connStr)
+		db, err := sqlx.Connect("postgres", connStr)
 
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't connect to postgres database", err)
+			return nil, fmt.Errorf("Couldn't connect to postgres database: %s", err)
 		}
 
 		return db, nil
