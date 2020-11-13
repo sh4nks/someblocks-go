@@ -3,8 +3,6 @@ package core
 import (
 	"log"
 	"net/http"
-
-	"github.com/jmoiron/sqlx"
 )
 
 // Error represents a handler error. It provides methods for a HTTP status
@@ -28,14 +26,6 @@ func (se StatusError) Error() string {
 // Returns our HTTP status code.
 func (se StatusError) Status() int {
 	return se.Code
-}
-
-// A (simple) example of our application-wide configuration.
-type AppContext struct {
-	DB   *sqlx.DB
-	Port string
-	Host string
-	Test string
 }
 
 // The Handler struct that takes a configured Env and a function matching

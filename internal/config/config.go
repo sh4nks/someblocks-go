@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
-	"path/filepath"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
@@ -22,7 +21,7 @@ map[string]interface{}{
 })
 */
 
-func Init() {
+func LoadConfig() {
 	loadConfigFromStruct(Cfg)
 	viper.AutomaticEnv()
 	viper.ReadInConfig()
@@ -51,7 +50,7 @@ type Config struct {
 var Cfg = &Config{
 	Database: Database{
 		Driver:   "sqlite3",
-		Dbname: "someblocks.sqlite",
+		Dbname:   "someblocks.sqlite",
 		Username: "",
 		Password: "",
 	},
@@ -82,10 +81,10 @@ func loadConfigFromStruct(cfg interface{}) {
 }
 
 func Load(cfgFile string) {
-	viper.SetConfigName("config")                     // name of config file (without extension)
-	viper.SetConfigType("yaml")                       // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath(filepath.Join(".", "config")) // look for the default config in the src config directory
-	viper.AddConfigPath("/etc/someblocks")            // look for config in the src config directory
+	viper.SetConfigName("config")          // name of config file (without extension)
+	viper.SetConfigType("yaml")            // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath(".")               // look for the default config in the src config directory
+	viper.AddConfigPath("/etc/someblocks") // look for config in the src config directory
 
 	if cfgFile != "" {
 		// Use config file from the flag.

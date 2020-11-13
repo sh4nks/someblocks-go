@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/go-chi/chi"
 	"net/http"
-	"someblocks/core"
+	"someblocks/internal/core"
 )
 
 type LoginForm struct {
@@ -21,7 +21,7 @@ type RegisterForm struct {
 
 func Login(appCtx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte(appCtx.Test))
+	w.Write([]byte("Hello Login"))
 }
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {

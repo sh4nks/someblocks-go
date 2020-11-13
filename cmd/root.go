@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"someblocks/config"
+	"someblocks/internal/config"
 )
 
 var cfgFile string
