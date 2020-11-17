@@ -1,21 +1,21 @@
 package page
 
 import (
-	"github.com/go-chi/chi"
 	"net/http"
 	"someblocks/internal/core"
+
+	"github.com/go-chi/chi"
 )
 
-func Index(appCtx *core.AppContext, w http.ResponseWriter, r *http.Request) {
-	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte("Hello World"))
+func Index(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
+	ctx.HTML(w, 200, "index", core.H{"hello": "json"})
 }
 
-func ViewPage(w http.ResponseWriter, r *http.Request) {
+func ViewPage(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 	//ctx.HTML(200, "page", gin.H{
 	//	"Title": "Hello Page!",
 	//	"Body": "Mah body is dat",
 	//})
 	pageID := chi.URLParam(r, "pageID")
-	w.Write([]byte(pageID))
+	ctx.HTML(w, 200, "page", core.H{"pageID": pageID})
 }

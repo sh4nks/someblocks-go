@@ -1,11 +1,16 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>{{ template "title" .}}</title>
-</head>
-<body>
+  <head>
+    <title>
+    {{if .Title }}
+        {{ .Title }}
+    {{else}}
+        My Layout
+    {{end}}
+    </title>
+  </head>
+  <body>
 
-{{template "content" .}}
+    {{ yield }}
 
-</body>
+  </body>
 </html>

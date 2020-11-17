@@ -20,6 +20,7 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/viper"
+	"github.com/unrolled/render"
 )
 
 type App struct {
@@ -42,6 +43,13 @@ func (app *App) CreateApp() http.Handler {
 		app.Ctx.DB = db
 	}
 
+	// Setup "Template Engine" AKA renderer
+	render := render.New(render.Options{
+				Layout: "layout",
+				Extensions: []string{".html"},
+			})
+	app.Ctx.UseRender(render)
+
 	router := chi.NewRouter()
 	router.Use(
 		middleware.RequestID,
@@ -51,13 +59,15 @@ func (app *App) CreateApp() http.Handler {
 	)
 
 	router.Get("/", core.AppHandleFunc(app.Ctx, page.Index))
-	//router.Get("/page/{pageID}", page.ViewPage)
+	router.Get("/page/{pageID}", core.AppHandleFunc(app.Ctx, page.ViewPage))
 
 	//router.Get("/blog", blog.Index)
 	//router.Get("/blog/{blogID}", blog.ViewPost)
 
 	router.Get("/auth/login", core.AppHandleFunc(app.Ctx, auth.Login))
-	//router.Post("/auth/logout", auth.Logout)
+	router.Post("/auth/logout", core.AppHandleFunc(app.Ctx, auth.Logout))
+
+	app.Routes = router
 	return router
 }
 

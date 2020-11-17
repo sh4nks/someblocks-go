@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"github.com/go-chi/chi"
 	"net/http"
 	"someblocks/internal/core"
+
+	"github.com/go-chi/chi"
 )
 
 type LoginForm struct {
@@ -19,18 +20,18 @@ type RegisterForm struct {
 	confirmPassword string
 }
 
-func Login(appCtx *core.AppContext, w http.ResponseWriter, r *http.Request) {
-	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte("Hello Login"))
+func Login(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
+	ctx.HTML(w, 200, "login", core.H{"Title": "Login"})
 }
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
-	//ctx.HTML(200, "page", gin.H{
-	//	"Title": "Hello Page!",
-	//	"Body": "Mah body is dat",
-	//})
 	pageID := chi.URLParam(r, "pageID")
 	w.Write([]byte(pageID))
+}
+
+func Logout(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
+	//ctx.HTML(200, "index", gin.H{})
+	w.Write([]byte("Hello Logout"))
 }
 
 /*
