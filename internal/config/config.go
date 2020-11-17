@@ -3,9 +3,9 @@ package config
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 
 	"github.com/mitchellh/mapstructure"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
@@ -65,18 +65,18 @@ func loadConfigFromStruct(cfg interface{}) {
 	cfgMap := make(map[string]interface{})
 	err := mapstructure.Decode(cfg, &cfgMap)
 	if err != nil {
-		log.Fatalf("failed to marshal default config")
+		log.Fatal().Err(err).Msg("failed to marshal default config")
 	}
 
 	cfgJsonBytes, err := json.Marshal(&cfgMap)
 	if err != nil {
-		log.Fatal("failed to marshal default config")
+		log.Fatal().Err(err).Msg("failed to marshal default config")
 	}
 
 	viper.SetConfigType("json")
 	err = viper.ReadConfig(bytes.NewReader(cfgJsonBytes))
 	if err != nil {
-		log.Fatal("failed to read default config")
+		log.Fatal().Err(err).Msg("failed to read default config")
 	}
 }
 
@@ -93,17 +93,16 @@ func Load(cfgFile string) {
 
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
-		log.Fatalf("Error using config file: %s", err)
+		log.Fatal().Msgf("Error using config file: %s", err)
 	}
 
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		log.Printf("Using config file: %s", viper.ConfigFileUsed())
+		log.Info().Msgf("Using config file: %s", viper.ConfigFileUsed())
 	}
 
 	if err := viper.Unmarshal(Cfg); err != nil {
-		log.Fatal("Couldn't unmarshal viper config into Cfg", err)
+		log.Fatal().Msgf("Couldn't unmarshal viper config into Cfg", err)
 	}
-	//log.Printf("Config: %v", Cfg)
 }

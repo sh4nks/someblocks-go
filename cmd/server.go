@@ -2,22 +2,22 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"someblocks/internal/app"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
 
+	"github.com/rs/zerolog/log"
+)
 
 func runServer(host string, port int) {
 	app := app.App{}
 	app.CreateApp()
 
 	addr := fmt.Sprintf("%s:%d", host, port)
-	log.Printf("Running on http://%s/ (Press CTRL+C to quit)", addr)
+	log.Info().Msgf("Running on http://%s/ (Press CTRL+C to quit)", addr)
 
 	http.ListenAndServe(addr, app.Routes)
 }

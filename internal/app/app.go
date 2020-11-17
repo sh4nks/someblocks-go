@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"log"
+
 	"net/http"
 	"path/filepath"
 	"someblocks/internal/core"
@@ -19,6 +19,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"github.com/unrolled/render"
 )
@@ -37,7 +38,7 @@ func (app *App) CreateApp() http.Handler {
 		db, err := app.SetupDatabase(viper.GetString("database.driver"))
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while seting up the database")
 		}
 
 		app.Ctx.DB = db
@@ -76,7 +77,7 @@ func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
 		dir := core.GetAppDir()
 		connStr := filepath.Join(dir, viper.GetString("database.dbname"))
 
-		log.Printf("Using sqlite3 with following connection string: %s", connStr)
+		log.Debug().Msgf("Using sqlite3 with following connection string: %s", connStr)
 
 		db, err := sqlx.Open("sqlite3", connStr)
 
@@ -110,7 +111,7 @@ func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
 		} else {
 			redactedStr = connStr
 		}
-		log.Printf("Using postgres with following connection string: %s", redactedStr)
+		log.Debug().Msgf("Using postgres with following connection string: %s", redactedStr)
 
 		db, err := sqlx.Connect("postgres", connStr)
 
@@ -125,10 +126,10 @@ func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
 }
 
 func (app *App) Migrate() {
-	log.Println("Running migrations...")
+	log.Info().Msg("Running migrations...")
 	db, err := app.SetupDatabase(viper.GetString("database.driver"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("An error occured during the database setup")
 	}
 
 	drivername := viper.GetString("database.driver")
@@ -136,38 +137,37 @@ func (app *App) Migrate() {
 	if drivername == "sqlite" || drivername == "sqlite3" {
 		migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "sqlite3"))
 
-		log.Println("Using migrations from: ", migrationsPath)
+		log.Info().Msgf("Using migrations from: ", migrationsPath)
 
 		driver, err := sqlite3.WithInstance(db.DB, &sqlite3.Config{})
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while trying to use sqlite")
 		}
 
 		m, err := migrate.NewWithDatabaseInstance(migrationsPath, "sqlite", driver)
-
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
 		}
 		if err := m.Up(); err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while running the migrations")
 		}
 
 	} else if drivername == "postgres" {
 		migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "postgres"))
-		log.Println("Using migrations from: ", migrationsPath)
+		log.Info().Msgf("Using migrations from: ", migrationsPath)
 
 		driver, err := postgres.WithInstance(db.DB, &postgres.Config{})
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while trying to use postgres")
 		}
 
 		m, err := migrate.NewWithDatabaseInstance(migrationsPath, "postgres", driver)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
 		}
 		if err := m.Up(); err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("An error occured while running the migrations")
 		}
 	}
 }

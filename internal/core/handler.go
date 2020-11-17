@@ -1,8 +1,9 @@
 package core
 
 import (
-	"log"
 	"net/http"
+
+	"github.com/rs/zerolog/log"
 )
 
 // Error represents a handler error. It provides methods for a HTTP status
@@ -43,7 +44,7 @@ func (h AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case Error:
 			// We can retrieve the status here and write out a specific
 			// HTTP status code.
-			log.Printf("HTTP %d - %s", e.Status(), e)
+			log.Debug().Msgf("HTTP %d - %s", e.Status(), e)
 			http.Error(w, e.Error(), e.Status())
 		default:
 			// Any error types we don't specifically look out for default
