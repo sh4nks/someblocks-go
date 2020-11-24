@@ -3,8 +3,6 @@ package auth
 import (
 	"net/http"
 	"someblocks/internal/core"
-
-	"github.com/go-chi/chi"
 )
 
 type LoginForm struct {
@@ -25,8 +23,7 @@ func Login(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {
-	pageID := chi.URLParam(r, "pageID")
-	w.Write([]byte(pageID))
+	//var login LoginForm
 }
 
 func Logout(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {

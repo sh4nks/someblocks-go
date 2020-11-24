@@ -13,8 +13,7 @@ import (
 )
 
 func runServer(host string, port int) {
-	app := app.App{}
-	app.CreateApp()
+	app := app.NewApp()
 
 	addr := fmt.Sprintf("%s:%d", host, port)
 	log.Info().Msgf("Running on http://%s/ (Press CTRL+C to quit)", addr)

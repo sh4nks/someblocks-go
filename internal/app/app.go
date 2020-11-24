@@ -29,19 +29,18 @@ type App struct {
 	Routes http.Handler
 }
 
-func (app *App) CreateApp() http.Handler {
+func NewApp() *App {
+	app := App{}
+	app.InitApp()
+	return &app
+}
 
-	// Create the AppContext if it doesn't exist
-	if app.Ctx == nil {
-		app.Ctx = &core.AppContext{}
+func (app *App) InitApp() {
 
-		db, err := app.SetupDatabase(viper.GetString("database.driver"))
+	db, err := app.SetupDatabase(viper.GetString("database.driver"))
 
-		if err != nil {
-			log.Fatal().Err(err).Msg("An error occured while seting up the database")
-		}
-
-		app.Ctx.DB = db
+	if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while seting up the database")
 	}
 
 	// Setup "Template Engine" AKA renderer
@@ -49,8 +48,19 @@ func (app *App) CreateApp() http.Handler {
 				Layout: "layout",
 				Extensions: []string{".html"},
 			})
-	app.Ctx.UseRender(render)
 
+	if app.Ctx == nil {
+		app.Ctx = &core.AppContext{
+			DB: db,
+			Render: render,
+		}
+	}
+
+	app.autoMigrate()
+	app.registerRoutes()
+}
+
+func (app *App) registerRoutes() {
 	router := chi.NewRouter()
 	router.Use(
 		middleware.RequestID,
@@ -67,9 +77,7 @@ func (app *App) CreateApp() http.Handler {
 
 	router.Get("/auth/login", core.AppHandleFunc(app.Ctx, auth.Login))
 	router.Post("/auth/logout", core.AppHandleFunc(app.Ctx, auth.Logout))
-
 	app.Routes = router
-	return router
 }
 
 func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
@@ -125,49 +133,90 @@ func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
 	return nil, fmt.Errorf("%s is not supported", drivername)
 }
 
+func (app *App) autoMigrate() {
+	log.Info().Msg("Running auto migrations...")
+	mustAppContext(app)
+	drivername := viper.GetString("database.driver")
+	if drivername == "sqlite" || drivername == "sqlite3" {
+		migrateSQLite(app.Ctx.DB)
+	} else if drivername == "postgres" {
+		migratePostgres(app.Ctx.DB)
+	}
+}
+
 func (app *App) Migrate() {
 	log.Info().Msg("Running migrations...")
+
 	db, err := app.SetupDatabase(viper.GetString("database.driver"))
 	if err != nil {
 		log.Fatal().Err(err).Msg("An error occured during the database setup")
 	}
 
 	drivername := viper.GetString("database.driver")
-	dir := filepath.Join(core.GetAppDir(), "migrations")
 	if drivername == "sqlite" || drivername == "sqlite3" {
-		migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "sqlite3"))
-
-		log.Info().Msgf("Using migrations from: ", migrationsPath)
-
-		driver, err := sqlite3.WithInstance(db.DB, &sqlite3.Config{})
-		if err != nil {
-			log.Fatal().Err(err).Msg("An error occured while trying to use sqlite")
-		}
-
-		m, err := migrate.NewWithDatabaseInstance(migrationsPath, "sqlite", driver)
-		if err != nil {
-			log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
-		}
-		if err := m.Up(); err != nil {
-			log.Fatal().Err(err).Msg("An error occured while running the migrations")
-		}
-
+		migrateSQLite(db)
 	} else if drivername == "postgres" {
-		migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "postgres"))
-		log.Info().Msgf("Using migrations from: ", migrationsPath)
+		migratePostgres(db)
+	}
+}
 
-		driver, err := postgres.WithInstance(db.DB, &postgres.Config{})
-		if err != nil {
-			log.Fatal().Err(err).Msg("An error occured while trying to use postgres")
-		}
 
-		m, err := migrate.NewWithDatabaseInstance(migrationsPath, "postgres", driver)
+func migratePostgres(db *sqlx.DB) {
+	dir := filepath.Join(core.GetAppDir(), "migrations")
+	migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "postgres"))
+	log.Info().Msgf("Using migrations from: %s", migrationsPath)
 
-		if err != nil {
-			log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
-		}
-		if err := m.Up(); err != nil {
-			log.Fatal().Err(err).Msg("An error occured while running the migrations")
-		}
+	driver, err := postgres.WithInstance(db.DB, &postgres.Config{})
+	if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while trying to use postgres")
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(migrationsPath, "postgres", driver)
+
+	if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
+	}
+
+	err = m.Up()
+	if (err != nil && err.Error() == "no change") {
+		log.Info().Msg("No changes")
+	} else if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while running the migrations")
+	} else {
+		log.Info().Msg("Database schema updated")
+	}
+}
+
+
+func migrateSQLite(db *sqlx.DB) {
+	dir := filepath.Join(core.GetAppDir(), "migrations")
+	migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "sqlite3"))
+
+	log.Info().Msgf("Using migrations from: %s", migrationsPath)
+
+	driver, err := sqlite3.WithInstance(db.DB, &sqlite3.Config{})
+	if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while trying to use sqlite")
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(migrationsPath, "sqlite", driver)
+	if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while creating a new migrate instance")
+	}
+
+	err = m.Up()
+	if (err != nil && err.Error() == "no change") {
+		log.Info().Msg("No changes")
+	} else if err != nil {
+		log.Fatal().Err(err).Msg("An error occured while running the migrations")
+	} else {
+		log.Info().Msg("Database schema updated")
+	}
+}
+
+
+func mustAppContext(app *App) {
+	if app.Ctx == nil {
+		log.Fatal().Msg("Not running inside an app context.")
 	}
 }
