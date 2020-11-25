@@ -45,7 +45,10 @@ func (app *App) InitApp() {
 
 	// Setup "Template Engine" AKA renderer
 	render := render.New(render.Options{
-				Layout: "layout",
+				RenderPartialsWithoutPrefix: true,
+				IsDevelopment: true,
+				Directory: "templates",
+				Layout: "base",
 				Extensions: []string{".html"},
 			})
 

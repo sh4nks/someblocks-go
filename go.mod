@@ -6,6 +6,8 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.13.0
+	github.com/gorilla/csrf v1.7.0 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.8.0
 	github.com/magiconair/properties v1.8.4 // indirect

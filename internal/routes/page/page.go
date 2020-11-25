@@ -17,5 +17,5 @@ func ViewPage(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 	//	"Body": "Mah body is dat",
 	//})
 	pageID := chi.URLParam(r, "pageID")
-	ctx.HTML(w, 200, "page", core.H{"pageID": pageID})
+	ctx.HTML(w, 200, "page/page", core.H{"pageID": pageID})
 }
