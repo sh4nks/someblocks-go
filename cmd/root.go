@@ -43,6 +43,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(serverCmd())
 	rootCmd.AddCommand(dbCmd)
+	rootCmd.AddCommand(configCmd())
 
 	// TODO: Bind to cobra and viper
 	noColor := false
