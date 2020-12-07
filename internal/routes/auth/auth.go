@@ -19,7 +19,7 @@ type RegisterForm struct {
 }
 
 func Login(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
-	ctx.HTML(w, 200, "auth/login", core.H{"Title": "Login"})
+	ctx.HTML(w, r, 200, "auth/login", core.H{"Title": "Login"})
 }
 
 func LoginPost(w http.ResponseWriter, r *http.Request) {

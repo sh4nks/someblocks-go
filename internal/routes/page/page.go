@@ -8,7 +8,7 @@ import (
 )
 
 func Index(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
-	ctx.HTML(w, 200, "index", core.H{"hello": "json"})
+	ctx.HTML(w, r, 200, "index", core.H{"hello": "json"})
 }
 
 func ViewPage(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
@@ -17,5 +17,5 @@ func ViewPage(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
 	//	"Body": "Mah body is dat",
 	//})
 	pageID := chi.URLParam(r, "pageID")
-	ctx.HTML(w, 200, "page/page", core.H{"pageID": pageID})
+	ctx.HTML(w, r, 200, "page/page", core.H{"pageID": pageID})
 }

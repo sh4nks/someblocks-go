@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 
+	"html/template"
 	"net/http"
 	"path/filepath"
 	"someblocks/internal/core"
@@ -16,6 +17,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/gorilla/csrf"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -45,16 +47,22 @@ func (app *App) InitApp() {
 
 	// Setup "Template Engine" AKA renderer
 	render := render.New(render.Options{
-				RenderPartialsWithoutPrefix: true,
-				IsDevelopment: true,
-				Directory: "templates",
-				Layout: "base",
-				Extensions: []string{".html"},
-			})
+		RenderPartialsWithoutPrefix: true,
+		IsDevelopment:               viper.GetBool("debug"),
+		Directory:                   "templates",
+		Layout:                      "base",
+		Extensions:                  []string{".html"},
+		//Funcs: []template.FuncMap{
+		//	template.FuncMap{"testFunc": func() string {
+		//			return "My custom function"
+		//		},
+		//	},
+		//},
+	})
 
 	if app.Ctx == nil {
 		app.Ctx = &core.AppContext{
-			DB: db,
+			DB:     db,
 			Render: render,
 		}
 	}
@@ -64,6 +72,12 @@ func (app *App) InitApp() {
 }
 
 func (app *App) registerRoutes() {
+
+	csrfMiddleware := csrf.Protect(
+		[]byte(viper.GetString("secretkey")),
+		//csrf.Secure(viper.GetBool("debug")),
+	)
+
 	router := chi.NewRouter()
 	router.Use(
 		middleware.RequestID,
@@ -80,7 +94,7 @@ func (app *App) registerRoutes() {
 
 	router.Get("/auth/login", core.AppHandleFunc(app.Ctx, auth.Login))
 	router.Post("/auth/logout", core.AppHandleFunc(app.Ctx, auth.Logout))
-	app.Routes = router
+	app.Routes = csrfMiddleware(router)
 }
 
 func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
@@ -163,7 +177,6 @@ func (app *App) Migrate() {
 	}
 }
 
-
 func migratePostgres(db *sqlx.DB) {
 	dir := filepath.Join(core.GetAppDir(), "migrations")
 	migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "postgres"))
@@ -181,7 +194,7 @@ func migratePostgres(db *sqlx.DB) {
 	}
 
 	err = m.Up()
-	if (err != nil && err.Error() == "no change") {
+	if err != nil && err.Error() == "no change" {
 		log.Info().Msg("No changes")
 	} else if err != nil {
 		log.Fatal().Err(err).Msg("An error occured while running the migrations")
@@ -189,7 +202,6 @@ func migratePostgres(db *sqlx.DB) {
 		log.Info().Msg("Database schema updated")
 	}
 }
-
 
 func migrateSQLite(db *sqlx.DB) {
 	dir := filepath.Join(core.GetAppDir(), "migrations")
@@ -208,7 +220,7 @@ func migrateSQLite(db *sqlx.DB) {
 	}
 
 	err = m.Up()
-	if (err != nil && err.Error() == "no change") {
+	if err != nil && err.Error() == "no change" {
 		log.Info().Msg("No changes")
 	} else if err != nil {
 		log.Fatal().Err(err).Msg("An error occured while running the migrations")
@@ -216,7 +228,6 @@ func migrateSQLite(db *sqlx.DB) {
 		log.Info().Msg("Database schema updated")
 	}
 }
-
 
 func mustAppContext(app *App) {
 	if app.Ctx == nil {
