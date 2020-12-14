@@ -2,6 +2,8 @@ package app
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	"html/template"
 	"net/http"
@@ -29,6 +31,7 @@ import (
 type App struct {
 	Ctx    *core.AppContext
 	Routes http.Handler
+	Path   string
 }
 
 func NewApp() *App {
@@ -45,6 +48,9 @@ func (app *App) InitApp() {
 		log.Fatal().Err(err).Msg("An error occured while seting up the database")
 	}
 
+	// Set the app's root path
+	app.Path = core.GetAppDir()
+
 	// Setup "Template Engine" AKA renderer
 	render := render.New(render.Options{
 		RenderPartialsWithoutPrefix: true,
@@ -52,12 +58,13 @@ func (app *App) InitApp() {
 		Directory:                   "templates",
 		Layout:                      "base",
 		Extensions:                  []string{".html"},
-		//Funcs: []template.FuncMap{
-		//	template.FuncMap{"testFunc": func() string {
-		//			return "My custom function"
-		//		},
-		//	},
-		//},
+		Funcs: []template.FuncMap{
+			// Will be overriden in AppContext.HTML to add a CSRF Field
+			template.FuncMap{"csrfField": func() string {
+				return ""
+			},
+			},
+		},
 	})
 
 	if app.Ctx == nil {
@@ -84,6 +91,7 @@ func (app *App) registerRoutes() {
 		middleware.Logger,
 		middleware.RedirectSlashes,
 		middleware.Recoverer,
+		csrfMiddleware,
 	)
 
 	router.Get("/", core.AppHandleFunc(app.Ctx, page.Index))
@@ -94,7 +102,14 @@ func (app *App) registerRoutes() {
 
 	router.Get("/auth/login", core.AppHandleFunc(app.Ctx, auth.Login))
 	router.Post("/auth/logout", core.AppHandleFunc(app.Ctx, auth.Logout))
-	app.Routes = csrfMiddleware(router)
+
+	// Setup static files /static route that will serve the static files from
+	// from the ./static/ folder.
+	filesDir := filepath.Join(app.Path, "static")
+	route := "/static/"
+	fileServer(router, route, filesDir)
+
+	app.Routes = router
 }
 
 func (app *App) SetupDatabase(drivername string) (*sqlx.DB, error) {
@@ -155,7 +170,7 @@ func (app *App) autoMigrate() {
 	mustAppContext(app)
 	drivername := viper.GetString("database.driver")
 	if drivername == "sqlite" || drivername == "sqlite3" {
-		migrateSQLite(app.Ctx.DB)
+		migrateSQLite(app.Ctx.DB, &app.Path)
 	} else if drivername == "postgres" {
 		migratePostgres(app.Ctx.DB)
 	}
@@ -171,7 +186,7 @@ func (app *App) Migrate() {
 
 	drivername := viper.GetString("database.driver")
 	if drivername == "sqlite" || drivername == "sqlite3" {
-		migrateSQLite(db)
+		migrateSQLite(db, &app.Path)
 	} else if drivername == "postgres" {
 		migratePostgres(db)
 	}
@@ -203,8 +218,16 @@ func migratePostgres(db *sqlx.DB) {
 	}
 }
 
-func migrateSQLite(db *sqlx.DB) {
-	dir := filepath.Join(core.GetAppDir(), "migrations")
+func migrateSQLite(db *sqlx.DB, path *string) {
+	// Use the passed path if available
+	var appPath string
+	if path == nil {
+		appPath = core.GetAppDir()
+	} else {
+		appPath = *path
+	}
+
+	dir := filepath.Join(appPath, "migrations")
 	migrationsPath := fmt.Sprintf("file:///%s", filepath.Join(dir, "sqlite3"))
 
 	log.Info().Msgf("Using migrations from: %s", migrationsPath)
@@ -227,6 +250,29 @@ func migrateSQLite(db *sqlx.DB) {
 	} else {
 		log.Info().Msg("Database schema updated")
 	}
+}
+
+// FileServer conveniently sets up a http.FileServer handler to serve
+// static files from a http.FileSystem.
+func fileServer(r *chi.Mux, endpoint string, filesDir string) {
+	if strings.ContainsAny(endpoint, "{}*") {
+		panic("static file server does not permit any URL parameters.")
+	}
+
+	// Check if the path ends with '/' - if not return 404
+	if endpoint != "/" && endpoint[len(endpoint)-1] != '/' {
+		r.Get(endpoint, r.NotFoundHandler())
+	}
+
+	fs := http.StripPrefix(endpoint, http.FileServer(http.Dir(filesDir)))
+	r.Get(endpoint + "*", func(w http.ResponseWriter, r *http.Request) {
+		file := strings.Replace(r.RequestURI, endpoint, "/", 1)
+		if _, err := os.Stat(filesDir + file); os.IsNotExist(err) {
+			http.ServeFile(w, r, file)
+			return
+		}
+		fs.ServeHTTP(w, r)
+	})
 }
 
 func mustAppContext(app *App) {
