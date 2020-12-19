@@ -62,38 +62,37 @@ var Cfg = &Config{
 	Debug:     false,
 }
 
-func loadDefaultConfig(cfg interface{}) {
+func loadDefaultConfig() error {
 	cfgMap := make(map[string]interface{})
-	err := mapstructure.Decode(cfg, &cfgMap)
+	err := mapstructure.Decode(Cfg, &cfgMap)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to marshal default config")
+		log.Error().Err(err).Msg("Failed to decode default config.")
+		return err
 	}
 
 	cfgYamlBytes, err := yaml.Marshal(&cfgMap)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to marshal default config")
+		log.Error().Err(err).Msg("Failed to marshal default config.")
+		return err
 	}
 
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(bytes.NewReader(cfgYamlBytes))
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to read default config")
+		log.Error().Err(err).Msg("Failed to read default config.")
+		return err
 	}
+	return nil
 }
 
-func makeSecretKey(n int) string {
-	b := make([]byte, n)
-	_, err := rand.Read(b)
+func Load(cfgFile string) error {
+	err := loadDefaultConfig()
 	if err != nil {
-		log.Fatal().Err(err).Msg("Couldn't generate secret key.")
+		log.Error().Msgf("Error loading default config.")
+		return err
 	}
-	//return string(b[:])
-	return base64.URLEncoding.EncodeToString(b)
-}
 
-func Load(cfgFile string) {
-	loadDefaultConfig(Cfg)
-
+	// Setup viper to load our config from the filesystem and ENV
 	viper.SetConfigName("config") // name of config file (without extension)
 	viper.AddConfigPath(".")      // look for the default config in the src config directory
 
@@ -102,9 +101,10 @@ func Load(cfgFile string) {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	err := viper.MergeInConfig() // Find and read the config file
+	err = viper.MergeInConfig() // Find and read the config file
 	if err != nil {              // Handle errors reading the config file
-		log.Fatal().Msgf("Error using config file: %s", err)
+		log.Error().Msgf("Error using config file: %s", err)
+		return err
 	}
 	viper.AutomaticEnv()
 
@@ -113,15 +113,27 @@ func Load(cfgFile string) {
 	}
 
 	if err := viper.Unmarshal(Cfg); err != nil {
-		log.Fatal().Msgf("Couldn't unmarshal viper config into Cfg", err)
+		log.Error().Err(err).Msgf("Couldn't unmarshal viper config into Cfg")
+		return err
 	}
+	return err
 }
 
 func ToYAML() string {
-	c := viper.AllSettings()
-	bs, err := yaml.Marshal(c)
+	bs, err := yaml.Marshal(Cfg)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("unable to marshal config to YAML: %v", err)
+		log.Fatal().Err(err).Msgf("Unable to marshal config to YAML: %v", err)
 	}
 	return string(bs)
+}
+
+
+func makeSecretKey(n int) string {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Couldn't generate a secret key.")
+	}
+	//return string(b[:])
+	return base64.URLEncoding.EncodeToString(b)
 }

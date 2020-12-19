@@ -1,32 +1,25 @@
 package cmd
 
 import (
-	"fmt"
-	"net/http"
-	"someblocks/internal/app"
+	"someblocks/internal/server"
+	"someblocks/internal/config"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/rs/zerolog/log"
 )
 
-func runServer(host string, port int) {
-	app := app.NewApp()
-
-	addr := fmt.Sprintf("%s:%d", host, port)
-	log.Info().Msgf("Running on http://%s/ (Press CTRL+C to quit)", addr)
-
-	http.ListenAndServe(addr, app.Routes)
+func runServer(cfg *config.Config) {
+	srv := server.New(cfg)
+	srv.Start()
 }
 
-func serverCmd() *cobra.Command {
+func serverCmd(cfg *config.Config) *cobra.Command {
 	var srvCmd = &cobra.Command{
 		Use:   "server",
 		Short: "Runs the webserver",
 		Run: func(cmd *cobra.Command, args []string) {
-			runServer(viper.GetString("web.host"), viper.GetInt("web.port"))
+			runServer(cfg)
 		},
 	}
 

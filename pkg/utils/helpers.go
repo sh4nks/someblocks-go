@@ -1,4 +1,4 @@
-package core
+package utils
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ const (
 )
 
 
-func GetAppDir() string {
+func GetExecDir() string {
 	var dirAbsPath string
 	ex, err := os.Executable()
 	if err == nil {

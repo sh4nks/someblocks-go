@@ -1,9 +1,19 @@
-package auth
+package controllers
 
 import (
 	"net/http"
-	"someblocks/internal/core"
+	"someblocks/internal/app"
 )
+
+func NewAuthController(app *app.App) *AuthController {
+	return &AuthController{
+		app: app,
+	}
+}
+
+type AuthController struct {
+	app *app.App
+}
 
 type LoginForm struct {
 	Login      string `form:"login" binding:"required"`
@@ -18,15 +28,15 @@ type RegisterForm struct {
 	confirmPassword string
 }
 
-func Login(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
-	ctx.HTML(w, r, 200, "auth/login", core.H{"Title": "Login"})
+func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
+	c.app.HTML(w, r, 200, "auth/login", Data{"Title": "Login"})
 }
 
-func LoginPost(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
 	//var login LoginForm
 }
 
-func Logout(ctx *core.AppContext, w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	//ctx.HTML(200, "index", gin.H{})
 	w.Write([]byte("Hello Logout"))
 }

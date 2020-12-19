@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"someblocks/internal/config"
-	"someblocks/internal/core"
+	"someblocks/pkg/utils"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -37,13 +37,15 @@ func Execute() error {
 }
 
 func init() {
-	cobra.OnInitialize(func() { config.Load(cfgFile) })
+	cobra.OnInitialize(func() {
+		config.Load(cfgFile)
+	})
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default: config.yaml)")
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(serverCmd())
-	rootCmd.AddCommand(dbCmd)
-	rootCmd.AddCommand(configCmd())
+	rootCmd.AddCommand(serverCmd(config.Cfg))
+	rootCmd.AddCommand(dbCmd(config.Cfg))
+	rootCmd.AddCommand(configCmd(config.Cfg))
 
 	// TODO: Bind to cobra and viper
 	noColor := false
@@ -54,25 +56,25 @@ func init() {
 		if ll, ok := i.(string); ok {
 			switch ll {
 			case "trace":
-				l = core.Colorize("TRACE", core.ColorMagenta, noColor)
+				l = utils.Colorize("TRACE", utils.ColorMagenta, noColor)
 			case "debug":
-				l = core.Colorize("DEBUG", core.ColorYellow, noColor)
+				l = utils.Colorize("DEBUG", utils.ColorYellow, noColor)
 			case "info":
-				l = core.Colorize("INFO", core.ColorGreen, noColor)
+				l = utils.Colorize("INFO", utils.ColorGreen, noColor)
 			case "warn":
-				l = core.Colorize("WARN", core.ColorRed, noColor)
+				l = utils.Colorize("WARN", utils.ColorRed, noColor)
 			case "error":
-				l = core.Colorize(core.Colorize("ERROR", core.ColorRed, noColor), core.ColorBold, noColor)
+				l = utils.Colorize(utils.Colorize("ERROR", utils.ColorRed, noColor), utils.ColorBold, noColor)
 			case "fatal":
-				l = core.Colorize(core.Colorize("FATAL", core.ColorRed, noColor), core.ColorBold, noColor)
+				l = utils.Colorize(utils.Colorize("FATAL", utils.ColorRed, noColor), utils.ColorBold, noColor)
 			case "panic":
-				l = core.Colorize(core.Colorize("PANIC", core.ColorRed, noColor), core.ColorBold, noColor)
+				l = utils.Colorize(utils.Colorize("PANIC", utils.ColorRed, noColor), utils.ColorBold, noColor)
 			default:
-				l = core.Colorize("???", core.ColorBold, noColor)
+				l = utils.Colorize("???", utils.ColorBold, noColor)
 			}
 		} else {
 			if i == nil {
-				l = core.Colorize("???", core.ColorBold, noColor)
+				l = utils.Colorize("???", utils.ColorBold, noColor)
 			} else {
 				l = strings.ToUpper(fmt.Sprintf("%s", i))[0:3]
 			}

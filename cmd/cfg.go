@@ -9,7 +9,7 @@ import (
 
 var dumpCfg bool
 
-func configCmd() *cobra.Command {
+func configCmd(cfg *config.Config) *cobra.Command {
 	var cfgCmd = &cobra.Command{
 		Use:   "config",
 		Short: "Runs config related actions",
