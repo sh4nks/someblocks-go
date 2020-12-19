@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"net/http"
 	"someblocks/internal/app"
+
+	"github.com/labstack/echo/v4"
 )
 
 func NewAuthController(app *app.App) *AuthController {
@@ -28,17 +29,17 @@ type RegisterForm struct {
 	confirmPassword string
 }
 
-func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
-	c.app.HTML(w, r, 200, "auth/login", Data{"Title": "Login"})
+func (auth *AuthController) Login(c echo.Context) error {
+	return c.Render(200, "auth/login", Data{"Title": "Login"})
 }
 
-func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
+func (auth *AuthController) LoginPost(c echo.Context) error {
 	//var login LoginForm
+	return c.String(200, "POST LOGIN")
 }
 
-func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
-	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte("Hello Logout"))
+func (auth *AuthController) Logout(c echo.Context) error {
+	return c.String(200, "Hello Logout")
 }
 
 /*

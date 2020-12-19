@@ -4,6 +4,7 @@
             <h5 class="card-title">Login</h5>
 
             <form action="/auth/login" method="POST">
+                {{ csrfField }}
                 <div class="mb-3">
                     <label class="form-label" for="login">Username</label>
                     <input class="form-control" type="text" name="login" placeholder="Username or Email" value="">
