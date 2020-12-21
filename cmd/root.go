@@ -47,7 +47,6 @@ func init() {
 	rootCmd.AddCommand(dbCmd(config.Cfg))
 	rootCmd.AddCommand(configCmd(config.Cfg))
 
-	// TODO: Bind to cobra and viper
 	noColor := false
 
 	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
