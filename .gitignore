@@ -28,3 +28,4 @@ PRIVATE_NOTES
 *.db
 *.sqlite
 
+config.yaml
