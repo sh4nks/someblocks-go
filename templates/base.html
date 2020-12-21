@@ -15,6 +15,13 @@
 
     <main role="main" class="flex-shrink-0">
         <div class="container">
+            {{with $flash := getFlashedMessages}}
+                <div class="alert alert-{{$flash.Level}} alert-dismissible fade show" role="alert">
+                    {{$flash.Message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {{end}}
+
             {{ yield }}
         </div>
     </main><!-- /.container -->

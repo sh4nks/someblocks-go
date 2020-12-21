@@ -1,0 +1,4 @@
+[build]
+full_bin = "./main server"
+cmd = "go build -o ./main ."
+bin = "main"

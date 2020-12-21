@@ -2,11 +2,11 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
-	"net/http"
-	"path/filepath"
 	"someblocks/internal/app"
 	"someblocks/internal/config"
 	"someblocks/internal/controllers"
@@ -23,7 +23,6 @@ import (
 // https://github.com/infomark-org/infomark/blob/62367a65aadf3e38f7ee9cfb1401180d04374b52/api/app/api.go#L244
 // https://gitlab.com/joncalhoun/lenslocked.com/-/blob/master/main.go
 
-
 type Server struct {
 	App    *app.App
 	Router *chi.Mux
@@ -32,9 +31,7 @@ type Server struct {
 
 func New(cfg *config.Config) *Server {
 	db := models.SetupAndMigrate(cfg)
-
-	app := app.New()
-	app.DB = db
+	app := app.New(db)
 
 	csrfMiddleware := csrf.Protect(
 		[]byte(cfg.SecretKey),
@@ -48,6 +45,7 @@ func New(cfg *config.Config) *Server {
 		middleware.RedirectSlashes,
 		middleware.Recoverer,
 		csrfMiddleware,
+		app.Session.LoadAndSave,
 	)
 
 	pageController := controllers.NewPageController(app)

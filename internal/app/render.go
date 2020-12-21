@@ -9,11 +9,11 @@ import (
 )
 
 func (app *App) JSON(w http.ResponseWriter, status int, v interface{}) {
-	app.render.JSON(w, status, v)
+	app.Render.JSON(w, status, v)
 }
 
 func (app *App) Text(w http.ResponseWriter, status int, v string) {
-	app.render.Text(w, status, v)
+	app.Render.Text(w, status, v)
 }
 
 func (app *App) HTML(w http.ResponseWriter, r *http.Request, status int, tmpl string, data interface{}) {
@@ -22,7 +22,14 @@ func (app *App) HTML(w http.ResponseWriter, r *http.Request, status int, tmpl st
 			"csrfField": func() template.HTML {
 				return csrf.TemplateField(r)
 			},
+			"getFlashedMessages": func() *Flash {
+				flash := app.Session.GetFlash(r.Context())
+				if flash != nil {
+					return flash
+				}
+				return nil
+			},
 		},
 	}
-	app.render.HTML(w, status, tmpl, data, htmlOpts)
+	app.Render.HTML(w, status, tmpl, data, htmlOpts)
 }

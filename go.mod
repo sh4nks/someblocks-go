@@ -3,6 +3,7 @@ module someblocks
 go 1.15
 
 require (
+	github.com/alexedwards/scs/v2 v2.4.1-0.20201122155747-696f8e8a5fe2
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.13.0

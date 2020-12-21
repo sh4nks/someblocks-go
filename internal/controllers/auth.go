@@ -29,6 +29,7 @@ type RegisterForm struct {
 }
 
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
+	c.app.Session.SetFlash(r.Context(), "danger", "WORKING?")
 	c.app.HTML(w, r, 200, "auth/login", Data{"Title": "Login"})
 }
 
