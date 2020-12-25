@@ -10,9 +10,6 @@ import (
 	"github.com/unrolled/render"
 )
 
-// H is a shortcut for map[string]interface{}
-type H map[string]interface{}
-
 type App struct {
 	DB      *sqlx.DB
 	Session *SessionManager

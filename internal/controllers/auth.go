@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"someblocks/internal/app"
+	"someblocks/internal/forms"
 )
 
 func NewAuthController(app *app.App) *AuthController {
@@ -29,15 +30,36 @@ type RegisterForm struct {
 }
 
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
-	c.app.Session.SetFlash(r.Context(), "danger", "WORKING?")
-	c.app.HTML(w, r, 200, "auth/login", Data{"Title": "Login"})
+	c.app.HTML(w, r, "auth/login", app.D{
+		"Title": "Login",
+	})
 }
 
 func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
-	//var login LoginForm
+	err := r.ParseForm()
+	if err != nil {
+		c.app.ClientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.NewLoginForm(r.PostForm)
+	if !form.Valid() {
+		c.app.Session.SetFlash(r.Context(), "danger", "Login error")
+		c.app.HTML(w, r, "auth/login", app.D{
+			"Title": "Login",
+			"Form":  form,
+		})
+		return
+	}
+
+	//form.Get("Email")
+	//form.Get("Password")
+
+	c.app.Session.SetFlash(r.Context(), "success", "Logged in!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
+func (c *AuthController) LogoutPost(w http.ResponseWriter, r *http.Request) {
 	//ctx.HTML(200, "index", gin.H{})
 	w.Write([]byte("Hello Logout"))
 }

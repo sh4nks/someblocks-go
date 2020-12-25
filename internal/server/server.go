@@ -56,9 +56,9 @@ func New(cfg *config.Config) *Server {
 
 	//router.Get("/blog", blog.Index)
 	//router.Get("/blog/{blogID}", blog.ViewPost)
-
 	router.Get("/auth/login", authController.Login)
-	router.Post("/auth/logout", authController.Logout)
+	router.Post("/auth/login", authController.LoginPost)
+	router.Post("/auth/logout", authController.LogoutPost)
 
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.

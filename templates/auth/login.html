@@ -4,13 +4,25 @@
             <h5 class="card-title">Login</h5>
 
             <form action="/auth/login" method="POST">
+                {{ csrfField }}
+
+                {{with .Form.Errors.Generic}}
+                <div class="invalid-feedback">{{.}}</div>
+                {{end}}
+
                 <div class="mb-3">
-                    <label class="form-label" for="login">Username</label>
-                    <input class="form-control" type="text" name="login" placeholder="Username or Email" value="">
+                    <label class="form-label" for="login">Email</label>
+                    <input class="form-control {{ if .Form.Errors.Email }}is-invalid{{ end }}" type="text" name="Email" placeholder="Email" value='{{.Form.Get "Email"}}'>
+                    {{with .Form.Errors.Get "Email"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="password">Password</label>
-                    <input class="form-control" type="password" name="password" placeholder="Password" value="">
+                    <input class="form-control {{ if .Form.Errors.Password }}is-invalid{{ end }}" type="password" name="Password" placeholder="Password" value='{{.Form.Get "Password"}}'>
+                    {{with .Form.Errors.Get "Password"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
                 </div>
 
                 <div class="mb-3 form-check">
