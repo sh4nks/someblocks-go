@@ -18,7 +18,7 @@ type PageController struct {
 }
 
 func (c *PageController) PageIndex(w http.ResponseWriter, r *http.Request) {
-	c.app.HTML(w, r, 200, "index", Data{"hello": "json"})
+	c.app.HTML(w, r, "index", app.D{"hello": "json"})
 }
 
 func (c *PageController) PageView(w http.ResponseWriter, r *http.Request) {
@@ -27,5 +27,5 @@ func (c *PageController) PageView(w http.ResponseWriter, r *http.Request) {
 	//	"Body": "Mah body is dat",
 	//})
 	pageID := chi.URLParam(r, "pageID")
-	c.app.HTML(w, r, 200, "page/page", Data{"pageID": pageID})
+	c.app.HTML(w, r, "page/page", app.D{"pageID": pageID})
 }
