@@ -94,3 +94,19 @@ func (f *Form) ValidEmail(field string) {
 		f.Errors.Add(field, "Email is not valid")
 	}
 }
+
+// Implement a ConfirmPassword method to check that a password field matches
+// the confirm password field in the form. If the check fails then add the
+// appropriate message to the form errors.
+func (f *Form) ConfirmPassword(pwField string, confirmPwField string) {
+	pwValue := f.Get(pwField)
+	confirmPwValue := f.Get(confirmPwField)
+	if pwValue == "" || confirmPwValue == "" {
+		return
+	}
+
+	if strings.Compare(pwValue, confirmPwValue) != 0 {
+		f.Errors.Add(pwField, "Passwords do not match!")
+		f.Errors.Add(confirmPwField, "Passwords do not match!")
+	}
+}

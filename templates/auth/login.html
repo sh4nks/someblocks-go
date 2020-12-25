@@ -6,21 +6,21 @@
             <form action="/auth/login" method="POST">
                 {{ csrfField }}
 
-                {{with .Form.Errors.Generic}}
+                {{with .Form.Errors.Get "generic"}}
                 <div class="invalid-feedback">{{.}}</div>
                 {{end}}
 
                 <div class="mb-3">
                     <label class="form-label" for="login">Email</label>
-                    <input class="form-control {{ if .Form.Errors.Email }}is-invalid{{ end }}" type="text" name="Email" placeholder="Email" value='{{.Form.Get "Email"}}'>
-                    {{with .Form.Errors.Get "Email"}}
+                    <input class='form-control {{ if .Form.Errors.Get "email" }}is-invalid{{ end }}' type="text" name="email" placeholder="Email" value='{{.Form.Get "email"}}'>
+                    {{with .Form.Errors.Get "email"}}
                         <div class="invalid-feedback">{{.}}</div>
                     {{end}}
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="password">Password</label>
-                    <input class="form-control {{ if .Form.Errors.Password }}is-invalid{{ end }}" type="password" name="Password" placeholder="Password" value='{{.Form.Get "Password"}}'>
-                    {{with .Form.Errors.Get "Password"}}
+                    <input class='form-control {{ if .Form.Errors.Get "password" }}is-invalid{{ end }}' type="password" name="password" placeholder="Password" value='{{.Form.Get "password"}}'>
+                    {{with .Form.Errors.Get "password"}}
                         <div class="invalid-feedback">{{.}}</div>
                     {{end}}
                 </div>

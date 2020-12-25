@@ -1,0 +1,58 @@
+<div class="row justify-content-center">
+    <div class="card col-4">
+        <div class="card-body">
+            <h5 class="card-title">Register</h5>
+
+            <form action="/auth/register" method="POST">
+                {{ csrfField }}
+
+                {{with .Form.Errors.Get "generic"}}
+                <div class="invalid-feedback">{{.}}</div>
+                {{end}}
+
+                <div class="mb-3">
+                    <label class="form-label" for="login">Username</label>
+                    <input class='form-control {{ if .Form.Errors.Get "username" }}is-invalid{{ end }}' type="text" name="username" placeholder="Username" value='{{.Form.Get "username"}}'>
+                    {{with .Form.Errors.Get "username"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="login">Email</label>
+                    <input class='form-control {{ if .Form.Errors.Get "email" }}is-invalid{{ end }}' type="text" name="email" placeholder="Email" value='{{.Form.Get "email"}}'>
+                    {{with .Form.Errors.Get "email"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <input class='form-control {{ if .Form.Errors.Get "password" }}is-invalid{{ end }}' type="password" name="password" placeholder="Password" value="">
+                    {{with .Form.Errors.Get "password"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="password">Confirm Password</label>
+                    <input class='form-control {{ if .Form.Errors.Get "confirm_password" }}is-invalid{{ end }}' type="password" name="confirm_password" placeholder="Confirm Password" value="">
+                    {{with .Form.Errors.Get "confirm_password"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input class='form-check-input {{ if .Form.Errors.Get "tos" }}is-invalid{{ end }}' type="checkbox" name="tos">
+                    <label class="form-check-label"> I accept the <a href="#">Terms of Service</a></label>
+
+                    {{with .Form.Errors.Get "tos"}}
+                        <div class="invalid-feedback">{{.}}</div>
+                    {{end}}
+                </div>
+
+                <input class="btn btn-primary" type="submit" name="submit" value="Login">
+            </form>
+
+        </div>
+    </div>
+</div>

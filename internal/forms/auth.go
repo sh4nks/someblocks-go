@@ -18,7 +18,7 @@ func NewLoginForm(data url.Values) *LoginForm {
 }
 
 func (f *LoginForm) Valid() bool {
-	f.Required("Email", "Password")
+	f.Required("email", "password")
 	return len(f.Errors) == 0
 }
 
@@ -36,10 +36,21 @@ func NewRegisterForm(data url.Values) *RegisterForm {
 }
 
 func (f *RegisterForm) Valid() bool {
-	f.Required("Email")
-	f.ValidEmail("Email")
+	f.Required("username")
+	f.MinLength("username", 3)
 
-	f.Required("Password")
-	f.MinLength("Password", 8)
+	f.Required("email")
+	f.ValidEmail("email")
+
+	f.Required("password")
+	f.MinLength("password", 8)
+
+	f.Required("confirm_password")
+	f.MinLength("confirm_password", 8)
+
+	f.ConfirmPassword("password", "confirm_password")
+
+	f.Required("tos")
+
 	return len(f.Errors) == 0
 }

@@ -4,16 +4,19 @@ import (
 	"net/http"
 	"someblocks/internal/app"
 	"someblocks/internal/forms"
+	"someblocks/internal/models"
 )
 
-func NewAuthController(app *app.App) *AuthController {
+func NewAuthController(app *app.App, userService *models.UserService) *AuthController {
 	return &AuthController{
-		app: app,
+		app:         app,
+		userService: userService,
 	}
 }
 
 type AuthController struct {
-	app *app.App
+	app         *app.App
+	userService *models.UserService
 }
 
 type LoginForm struct {
@@ -51,9 +54,7 @@ func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-
-	//form.Get("Email")
-	//form.Get("Password")
+	c.userService.Authenticate(form.Get("email"), form.Get("password"))
 
 	c.app.Session.SetFlash(r.Context(), "success", "Logged in!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -64,23 +65,35 @@ func (c *AuthController) LogoutPost(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello Logout"))
 }
 
-/*
-func Login(ctx *gin.Context) {
-	ctx.HTML(200, "login", gin.H{
-		"title": "Login",
+func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
+	c.app.HTML(w, r, "auth/register", app.D{
+		"Title": "Register",
 	})
 }
 
-func LoginPost(ctx *gin.Context) {
-	var login LoginForm
-
-	if err := ctx.ShouldBind(&login); err != nil {
-		log.Println(err.Error())
-	} else {
-		log.Println("ELSE")
-		log.Println(login.Login)
-		log.Println(login.Password)
-		log.Println(login.RememberMe)
+func (c *AuthController) RegisterPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		c.app.ClientError(w, http.StatusBadRequest)
+		return
 	}
+
+	form := forms.NewRegisterForm(r.PostForm)
+	if !form.Valid() {
+		c.app.Session.SetFlash(r.Context(), "danger", "Something went wrong")
+		c.app.HTML(w, r, "auth/register", app.D{
+			"Title": "Register",
+			"Form":  form,
+		})
+		return
+	}
+
+	c.userService.Insert(
+		form.Get("username"),
+		form.Get("email"),
+		form.Get("password"),
+	)
+
+	c.app.Session.SetFlash(r.Context(), "success", "Registered!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-*/

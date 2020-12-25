@@ -48,8 +48,10 @@ func New(cfg *config.Config) *Server {
 		app.Session.LoadAndSave,
 	)
 
+	userService := models.UserService{DB: db}
+
+	authController := controllers.NewAuthController(app, &userService)
 	pageController := controllers.NewPageController(app)
-	authController := controllers.NewAuthController(app)
 
 	router.Get("/", pageController.PageIndex)
 	router.Get("/page/{pageID}", pageController.PageView)
@@ -59,6 +61,9 @@ func New(cfg *config.Config) *Server {
 	router.Get("/auth/login", authController.Login)
 	router.Post("/auth/login", authController.LoginPost)
 	router.Post("/auth/logout", authController.LogoutPost)
+
+	router.Get("/auth/register", authController.Register)
+	router.Post("/auth/register", authController.RegisterPost)
 
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.

@@ -85,7 +85,7 @@ func Migrate(db *sqlx.DB, cfg *config.Config) {
 	}
 }
 
-func SetupAndMigrate(cfg *config.Config) (*sqlx.DB) {
+func SetupAndMigrate(cfg *config.Config) *sqlx.DB {
 	db, err := SetupDatabase(cfg)
 	if err != nil {
 		log.Fatal().Msgf("An error occured while seting up the database: %s", err)
