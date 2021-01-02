@@ -7,7 +7,7 @@
                 {{ csrfField }}
 
                 {{with .Form.Errors.Get "generic"}}
-                <div class="invalid-feedback">{{.}}</div>
+                    <div class="text-danger py-3">{{.}}</div>
                 {{end}}
 
                 <div class="mb-3">
@@ -32,6 +32,7 @@
 
                 <input class="btn btn-primary" type="submit" name="submit" value="Login">
             </form>
+
 
         </div>
     </div>

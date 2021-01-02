@@ -26,7 +26,7 @@ func (app *App) HTML(w http.ResponseWriter, r *http.Request, tmpl string, data D
 				return csrf.TemplateField(r)
 			},
 			"getFlashedMessages": func() *Flash {
-				flash := app.Session.GetFlash(r.Context())
+				flash := app.Session.getFlash(r)
 				if flash != nil {
 					return flash
 				}
@@ -35,5 +35,6 @@ func (app *App) HTML(w http.ResponseWriter, r *http.Request, tmpl string, data D
 		},
 	}
 
+	data["CurrentUser"] = app.GetCurrentUser(r)
 	app.Render.HTML(w, http.StatusOK, tmpl, data, htmlOpts)
 }

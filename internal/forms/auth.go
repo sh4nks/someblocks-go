@@ -2,6 +2,7 @@ package forms
 
 import (
 	"net/url"
+	"someblocks/internal/models"
 )
 
 type LoginForm struct {
@@ -35,7 +36,7 @@ func NewRegisterForm(data url.Values) *RegisterForm {
 	}
 }
 
-func (f *RegisterForm) Valid() bool {
+func (f *RegisterForm) Valid(us *models.UserService) bool {
 	f.Required("username")
 	f.MinLength("username", 3)
 
@@ -51,6 +52,20 @@ func (f *RegisterForm) Valid() bool {
 	f.ConfirmPassword("password", "confirm_password")
 
 	f.Required("tos")
+
+	value := f.Get("username")
+	if value != "" {
+		if user := us.GetByUsername(value); user != nil {
+			f.Errors.Add("username", "Username already in use.")
+		}
+	}
+
+	value = f.Get("email")
+	if value != "" {
+		if user := us.GetByEmail(value); user != nil {
+			f.Errors.Add("email", "Email address already in use.")
+		}
+	}
 
 	return len(f.Errors) == 0
 }

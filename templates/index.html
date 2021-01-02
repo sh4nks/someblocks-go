@@ -1,2 +1,5 @@
 {{ . }}
+{{if .CurrentUser }}
+{{.CurrentUser}}
+{{end}}
 <br>csrfField: {{ csrfField }}

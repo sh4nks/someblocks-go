@@ -14,23 +14,44 @@
             <li class="nav-item">
                 <a class="nav-link" href="/page/about">About Me</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/user/profile">Profile</a>
-            </li>
         </ul>
         <div class="d-flex">
 
 
             <div class="btn-group">
-              <a href="/auth/login" class="btn btn-primary">Login</a>
 
-              <div class="btn-group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="/auth/register">Password</a></li>
-                  <li><a class="dropdown-item" href="/auth/forgot-password">Forgot Password?</a></li>
-                </ul>
-              </div>
+              {{if .CurrentUser}}
+                <a href="/user/profile" class="btn btn-primary">Hi {{.CurrentUser.Username}}</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/user/settings">Settings</a></li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                      <form class="dropdown-item" action="/auth/logout" method="POST">
+                        {{ csrfField }}
+                        <button class="btn btn-text px-0 py-0 border-0">Logout</button>
+                      </form>
+                    </li>
+                  </ul>
+                </div>
+
+              {{else}}
+                <a href="/auth/login" class="btn btn-primary">Login</a>
+
+                <div class="btn-group">
+                  <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/auth/register">Register</a></li>
+                    <li><a class="dropdown-item" href="/auth/forgot-password">Forgot Password?</a></li>
+                  </ul>
+                </div>
+
+              {{end}}
+
             </div>
 
         </div>

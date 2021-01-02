@@ -3,6 +3,8 @@ package app
 import (
 	"encoding/gob"
 	"html/template"
+	"net/http"
+	"someblocks/internal/models"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/jmoiron/sqlx"
@@ -29,7 +31,8 @@ func New(db *sqlx.DB) *App {
 		Layout:                      "base",
 		Extensions:                  []string{".html"},
 		Funcs: []template.FuncMap{
-			// Will be overriden in AppContext.HTML to add a CSRF Field
+			// Will be overriden in "(app *App) HTML()" to add a CSRF Field and
+			// a display the flashed messages
 			template.FuncMap{
 				"csrfField": func() string {
 					return ""
@@ -49,5 +52,29 @@ func New(db *sqlx.DB) *App {
 		DB:      db,
 		Render:  render,
 		Session: sessionManager,
+	}
+}
+
+func (app *App) GetCurrentUser(r *http.Request) *models.User {
+	userId := app.Session.GetInt(r.Context(), "userId")
+	if userId != 0 {
+		us := models.UserService{DB: app.DB}
+		user := us.GetById(userId)
+		return user
+	}
+	return nil
+}
+
+func (app *App) LoginRequired(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := app.GetCurrentUser(r)
+		if user == nil {
+			http.Redirect(w, r, "/auth/login", http.StatusFound)
+			return
+		}
+		ctx := r.Context()
+		ctx = WithCurrentUser(ctx, user)
+		r = r.WithContext(ctx)
+		f(w, r)
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"someblocks/internal/app"
 	"someblocks/internal/forms"
 	"someblocks/internal/models"
+
+	"github.com/rs/zerolog/log"
 )
 
 func NewAuthController(app *app.App, userService *models.UserService) *AuthController {
@@ -47,22 +49,42 @@ func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.NewLoginForm(r.PostForm)
 	if !form.Valid() {
-		c.app.Session.SetFlash(r.Context(), "danger", "Login error")
+		c.app.Flash(r, "Login error", "danger")
 		c.app.HTML(w, r, "auth/login", app.D{
 			"Title": "Login",
 			"Form":  form,
 		})
 		return
 	}
-	c.userService.Authenticate(form.Get("email"), form.Get("password"))
 
-	c.app.Session.SetFlash(r.Context(), "success", "Logged in!")
+	id, err := c.userService.Authenticate(form.Get("email"), form.Get("password"))
+	if err == models.ErrInvalidLoginCredentials {
+		c.app.Flash(r, "Login error", "danger")
+		form.Errors.Add("generic", "Email or Password is incorrect")
+		c.app.HTML(w, r, "auth/login", app.D{
+			"Title": "Login",
+			"Form":  form,
+		})
+		return
+	} else if err != nil {
+		c.app.ServerError(w, err)
+		return
+	}
+
+	log.Debug().Msgf("remember me: %v", form.Get("rememberMe"))
+	if form.Get("rememberMe") == "on" {
+		c.app.Session.RememberMe(r.Context(), true)
+	}
+
+	//c.app.Flash(r, "Logged in!", "success")
+	c.app.Session.Put(r.Context(), "userId", id)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (c *AuthController) LogoutPost(w http.ResponseWriter, r *http.Request) {
-	//ctx.HTML(200, "index", gin.H{})
-	w.Write([]byte("Hello Logout"))
+	c.app.Flash(r, "You've been logged out successfully!", "success")
+	c.app.Session.Remove(r.Context(), "userId")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
@@ -79,8 +101,8 @@ func (c *AuthController) RegisterPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := forms.NewRegisterForm(r.PostForm)
-	if !form.Valid() {
-		c.app.Session.SetFlash(r.Context(), "danger", "Something went wrong")
+	if !form.Valid(c.userService) {
+		c.app.Flash(r, "Something went wrong", "danger")
 		c.app.HTML(w, r, "auth/register", app.D{
 			"Title": "Register",
 			"Form":  form,
@@ -94,6 +116,6 @@ func (c *AuthController) RegisterPost(w http.ResponseWriter, r *http.Request) {
 		form.Get("password"),
 	)
 
-	c.app.Session.SetFlash(r.Context(), "success", "Registered!")
+	c.app.Flash(r, "Registered!", "success")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
