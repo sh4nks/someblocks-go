@@ -65,8 +65,8 @@ func (app *App) GetCurrentUser(r *http.Request) *models.User {
 	return nil
 }
 
-func (app *App) LoginRequired(f func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
+func (app *App) LoginRequired(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := app.GetCurrentUser(r)
 		if user == nil {
 			http.Redirect(w, r, "/auth/login", http.StatusFound)
@@ -75,6 +75,6 @@ func (app *App) LoginRequired(f func(http.ResponseWriter, *http.Request)) func(h
 		ctx := r.Context()
 		ctx = WithCurrentUser(ctx, user)
 		r = r.WithContext(ctx)
-		f(w, r)
-	}
+		next.ServeHTTP(w, r)
+	})
 }

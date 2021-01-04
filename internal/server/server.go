@@ -54,14 +54,14 @@ func New(cfg *config.Config) *Server {
 	pageController := controllers.NewPageController(app)
 
 	router.Get("/", pageController.PageIndex)
-	router.Get("/page/{pageID}", app.LoginRequired(pageController.PageView))
+	router.With(app.LoginRequired).Get("/page/{pageID}", pageController.PageView)
 
 	//router.Get("/blog", blog.Index)
 	//router.Get("/blog/{blogID}", blog.ViewPost)
 	router.Get("/auth/login", authController.Login)
 	router.Post("/auth/login", authController.LoginPost)
 
-	router.Post("/auth/logout", app.LoginRequired(authController.LogoutPost))
+	router.With(app.LoginRequired).Post("/auth/logout", authController.LogoutPost)
 
 	router.Get("/auth/register", authController.Register)
 	router.Post("/auth/register", authController.RegisterPost)

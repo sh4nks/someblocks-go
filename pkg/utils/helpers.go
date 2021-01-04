@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 )
 
-
 const (
 	ColorBlack = iota + 30
 	ColorRed
@@ -20,7 +19,6 @@ const (
 	ColorBold     = 1
 	ColorDarkGray = 90
 )
-
 
 func GetExecDir() string {
 	var dirAbsPath string
@@ -44,4 +42,15 @@ func Colorize(s interface{}, c int, disabled bool) string {
 		return fmt.Sprintf("%s", s)
 	}
 	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
+}
+
+// Merges maps (duplicate keys will be overwritten!)
+func MergeMaps(maps ...map[string]interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	for _, m := range maps {
+		for k, v := range m {
+			result[k] = v
+		}
+	}
+	return result
 }
