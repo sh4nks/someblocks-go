@@ -5,8 +5,6 @@ import (
 	"someblocks/internal/app"
 	"someblocks/internal/forms"
 	"someblocks/internal/models"
-
-	"github.com/rs/zerolog/log"
 )
 
 func NewAuthController(app *app.App, userService *models.UserService) *AuthController {
@@ -71,7 +69,6 @@ func (c *AuthController) LoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Debug().Msgf("remember me: %v", form.Get("rememberMe"))
 	if form.Get("rememberMe") == "on" {
 		c.app.Session.RememberMe(r.Context(), true)
 	}
