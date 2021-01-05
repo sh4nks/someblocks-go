@@ -10,11 +10,12 @@ import (
 	"someblocks/internal/app"
 	"someblocks/internal/config"
 	"someblocks/internal/controllers"
+	"someblocks/internal/middleware"
 	"someblocks/internal/models"
 	"someblocks/pkg/utils"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/gorilla/csrf"
 	"github.com/rs/zerolog/log"
 )
@@ -40,10 +41,10 @@ func New(cfg *config.Config) *Server {
 
 	router := chi.NewRouter()
 	router.Use(
-		middleware.RequestID,
-		middleware.Logger,
-		middleware.RedirectSlashes,
-		middleware.Recoverer,
+		chiMiddleware.RequestID,
+		chiMiddleware.Logger,
+		chiMiddleware.RedirectSlashes,
+		chiMiddleware.Recoverer,
 		csrfMiddleware,
 		app.Session.LoadAndSave,
 	)
@@ -53,15 +54,18 @@ func New(cfg *config.Config) *Server {
 	authController := controllers.NewAuthController(app, &userService)
 	pageController := controllers.NewPageController(app)
 
+	userMw := middleware.NewUserMiddleware(app, &userService)
+	router.Use(userMw.CurrentUser)
+
 	router.Get("/", pageController.PageIndex)
-	router.With(app.LoginRequired).Get("/page/{pageID}", pageController.PageView)
+	router.With(userMw.LoginRequired).Get("/page/{pageID}", pageController.PageView)
 
 	//router.Get("/blog", blog.Index)
 	//router.Get("/blog/{blogID}", blog.ViewPost)
 	router.Get("/auth/login", authController.Login)
 	router.Post("/auth/login", authController.LoginPost)
 
-	router.With(app.LoginRequired).Post("/auth/logout", authController.LogoutPost)
+	router.With(userMw.LoginRequired).Post("/auth/logout", authController.LogoutPost)
 
 	router.Get("/auth/register", authController.Register)
 	router.Post("/auth/register", authController.RegisterPost)

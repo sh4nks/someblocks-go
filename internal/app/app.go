@@ -3,9 +3,8 @@ package app
 import (
 	"encoding/gob"
 	"html/template"
-	"net/http"
-	"someblocks/internal/models"
 
+	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
@@ -47,34 +46,11 @@ func New(db *sqlx.DB) *App {
 	sessionManager := &SessionManager{
 		*scs.New(),
 	}
+	sessionManager.Store = sqlite3store.New(db.DB)
 
 	return &App{
 		DB:      db,
 		Render:  render,
 		Session: sessionManager,
 	}
-}
-
-func (app *App) GetCurrentUser(r *http.Request) *models.User {
-	userId := app.Session.GetInt(r.Context(), "userId")
-	if userId != 0 {
-		us := models.UserService{DB: app.DB}
-		user := us.GetById(userId)
-		return user
-	}
-	return nil
-}
-
-func (app *App) LoginRequired(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := app.GetCurrentUser(r)
-		if user == nil {
-			http.Redirect(w, r, "/auth/login", http.StatusFound)
-			return
-		}
-		ctx := r.Context()
-		ctx = WithCurrentUser(ctx, user)
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r)
-	})
 }

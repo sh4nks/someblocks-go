@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/csrf"
 	"github.com/unrolled/render"
+	"someblocks/internal/context"
 )
 
 // D stands for Data and is a shortcut for map[string]interface{}
@@ -35,6 +36,6 @@ func (app *App) HTML(w http.ResponseWriter, r *http.Request, tmpl string, data D
 		},
 	}
 
-	data["CurrentUser"] = app.GetCurrentUser(r)
+	data["CurrentUser"] = context.CurrentUser(r.Context())
 	app.Render.HTML(w, http.StatusOK, tmpl, data, htmlOpts)
 }
