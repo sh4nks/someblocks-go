@@ -2,6 +2,7 @@ package forms
 
 import (
 	"net/url"
+	"someblocks/internal/config"
 	"someblocks/internal/models"
 )
 
@@ -44,10 +45,10 @@ func (f *RegisterForm) Valid(us *models.UserService) bool {
 	f.ValidEmail("email")
 
 	f.Required("password")
-	f.MinLength("password", 8)
+	f.MinLength("password", config.Cfg.App.PasswordMinLength)
 
 	f.Required("confirm_password")
-	f.MinLength("confirm_password", 8)
+	f.MinLength("confirm_password", config.Cfg.App.PasswordMinLength)
 
 	f.ConfirmPassword("password", "confirm_password")
 

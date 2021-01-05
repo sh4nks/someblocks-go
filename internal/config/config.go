@@ -37,9 +37,14 @@ type Web struct {
 	Port int    `mapstructure:"port"`
 }
 
+type App struct {
+	PasswordMinLength int `mapstructure:"password_min_length"`
+}
+
 type Config struct {
 	Database  Database `mapstructure:"database"`
 	Web       Web      `mapstructure:"web"`
+	App       App      `mapstructure:"app"`
 	Logfile   string   `mapstructure:"logfile"`
 	SecretKey string   `mapstructure:"secretkey"`
 	Debug     bool     `mapstructure:"debug"`
@@ -56,6 +61,9 @@ var Cfg = &Config{
 	Web: Web{
 		Host: "127.0.0.1",
 		Port: 8080,
+	},
+	App: App{
+		PasswordMinLength: 8,
 	},
 	Logfile:   "someblocks.log",
 	SecretKey: makeSecretKey(32),
@@ -102,7 +110,7 @@ func Load(cfgFile string) error {
 	}
 
 	err = viper.MergeInConfig() // Find and read the config file
-	if err != nil {              // Handle errors reading the config file
+	if err != nil {             // Handle errors reading the config file
 		log.Error().Msgf("Error using config file: %s", err)
 		return err
 	}
@@ -126,7 +134,6 @@ func ToYAML() string {
 	}
 	return string(bs)
 }
-
 
 func makeSecretKey(n int) string {
 	b := make([]byte, n)
