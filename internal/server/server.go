@@ -37,6 +37,7 @@ func New(cfg *config.Config) *Server {
 	csrfMiddleware := csrf.Protect(
 		[]byte(cfg.SecretKey),
 		csrf.Secure(cfg.Debug),
+		csrf.Path("/"),
 	)
 
 	router := chi.NewRouter()
@@ -80,8 +81,7 @@ func New(cfg *config.Config) *Server {
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.
 	filesDir := filepath.Join(utils.GetExecDir(), "static")
-	route := "/static/"
-	FileServer(router, route, filesDir)
+	FileServer(router, "/static/", filesDir)
 
 	return &Server{
 		Config: cfg,
