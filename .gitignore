@@ -29,3 +29,6 @@ PRIVATE_NOTES
 *.sqlite
 
 config.yaml
+vendor
+node_modules
+*.pdf
