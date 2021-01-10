@@ -24,8 +24,13 @@ someblocks
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Project Dependencies
+vendor
+node_modules
+
+# Project Files
 PRIVATE_NOTES
 *.db
 *.sqlite
-
+*.pdf
 config.yaml
