@@ -1,5 +1,5 @@
 [build]
-full_bin = "./main server"
-cmd = "go build -o ./main ."
-bin = "main"
-exclude_dir = ["assets", "tmp", "vendor", "static", "templates"]
+full_bin = "./someblocks server"
+cmd = "go build -o ./someblocks ."
+bin = "someblocks"
+exclude_dir = ["frontend", "assets", "tmp", "vendor", "static", "templates"]
