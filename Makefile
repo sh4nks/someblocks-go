@@ -12,8 +12,10 @@ help:
 
 
 clean:
-	find . -name 'tmp' -exec rm -f {} +
+	find . -name 'tmp' -exec rm -rf {} +
 	find . -name '*~' -exec rm -f {} +
+	find . -name 'main' -exec rm -f {} +
+	find . -name 'someblocks' -exec rm -f {} +
 	go clean
 
 
