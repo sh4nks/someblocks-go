@@ -1,0 +1,76 @@
+<nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/user/profile">User</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Profile Settings</li>
+    </ol>
+</nav>
+
+<div class="row gutters-sm">
+    <div class="col-md-4 d-none d-md-block">
+        <div class="card">
+            <div class="card-body">
+                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                    <i class="fa fas-person sidebar-icon mr-2"></i>Profile Information
+                  </a>
+                    <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+                    <a class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Messages</a>
+                    <a class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body tab-content">
+                <div class="tab-pane active" id="profile">
+                    <h6>YOUR PROFILE INFORMATION</h6>
+                    <hr>
+                    <form>
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" aria-describedby="fullNameHelp" placeholder="Enter your fullname" value="">
+                            <small id="fullNameHelp" class="form-text text-muted">Your name may appear around here where you are mentioned. You can change or remove it at any time.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="bio">Your Bio</label>
+                            <textarea class="form-control autosize" id="bio" placeholder="Write something about you" style="resize: none; height: 62px;">I am awesome</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="url">URL</label>
+                            <input type="text" class="form-control" id="url" placeholder="Enter your website address" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" placeholder="Enter your location" value="">
+                        </div>
+                        <div class="form-group small text-muted">
+                            All of the fields on this page are optional and can be deleted at any time, and by filling them out, you're giving us consent to share this data wherever your user profile appears.
+                        </div>
+                        <button type="button" class="btn btn-primary">Update Profile</button>
+                        <button type="reset" class="btn btn-dark">Reset Changes</button>
+                    </form>
+                </div>
+                <div class="tab-pane" id="account">
+                    <h6>ACCOUNT SETTINGS</h6>
+                    <hr>
+                    <form>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Enter your username" value="">
+                            <small id="usernameHelp" class="form-text text-muted">After changing your username, your old username becomes available for anyone else to claim.</small>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label class="d-block text-danger">Delete Account</label>
+                            <p class="text-muted font-size-sm">Once you delete your account, there is no going back. Please be certain.</p>
+                        </div>
+                        <button class="btn btn-danger" type="button">Delete Account</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
