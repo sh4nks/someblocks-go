@@ -1,0 +1,25 @@
+<div class="row gutters-sm">
+    {{partial "user/_settings_navigation"}}
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body tab-content">
+                <div class="tab-pane active" id="notification">
+                    <form>
+                        {{ csrfField }}
+                        <h5>Notification Settings</h5>
+                        <hr>
+                        <div class="mb-3">
+                            <label class="d-block mb-0">Security Alerts</label>
+                            <div class="small text-muted mb-3">Receive security alert notifications via email</div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1" checked="">
+                                <label class="custom-control-label" for="customCheck1">Email each time you log into your account</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

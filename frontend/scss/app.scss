@@ -2,18 +2,6 @@
 
 @import "feathericons";
 
-//$nav-color: #4a5568;
-$nav-color: #dee2e6;
-
-body {
-    padding-top: 5rem;
-
-    //color: #1a202c;
-    color: #e9ecef;
-    text-align: left;
-    background-color: #111111;
-}
-
 /*
 Experiment with dark mode colors
 Resources:
@@ -40,20 +28,58 @@ Color ideas:
 
 */
 
+//$nav-color: #4a5568;
+$nav-color: #dee2e6;
+$font-color: $gray-400;
+$dark-primary-bg: mix(#000000, #151619, 50);
+$dark-secondary-bg: #151619;
+$dark-border-color: mix(#000000, #dee2e6, 80);
+
+body {
+    padding-top: 5rem;
+    color: $gray-400;
+    background-color: $dark-primary-bg;
+}
+
 code {
-  font-size: 80%;
+    font-size: 80%;
 }
 
 .bg-dark {
-    background-color: #212121 !important;
+    //background-color: #212121 !important;
+    //background-color: #39AC60 !important;
+}
+
+.form-control {
+    background-color: $dark-primary-bg;
+    border-color: $dark-border-color;
+    color: $gray-400;
+
+    &:focus {
+        background-color: $dark-primary-bg;
+        color: $gray-400 !important;
+    }
+}
+
+.card {
+    border-color: $dark-border-color;
+}
+
+.navbar-dark {
+    background-color: $dark-secondary-bg !important;
+
+    .navbar-brand {
+        color: $primary !important;
+    }
 }
 
 .footer {
-  background-color: #212121;
-  &.container {
-    padding-right: 15px;
-    padding-left: 15px;
-  }
+    background-color: $dark-secondary-bg;
+
+    &.container {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
 }
 
 .nav-link {
@@ -61,7 +87,7 @@ code {
 }
 
 .card {
-  background-color: #212121;
+    background-color: $dark-secondary-bg;
 }
 
 .shadow-none {

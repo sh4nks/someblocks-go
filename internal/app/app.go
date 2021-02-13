@@ -30,14 +30,17 @@ func New(db *sqlx.DB) *App {
 		Layout:                      "base",
 		Extensions:                  []string{".html"},
 		Funcs: []template.FuncMap{
-			// Will be overriden in "(app *App) HTML()" to add a CSRF Field and
-			// a display the flashed messages
+			// these functions will be overriden in app.HTML due to them
+			// needing a http.Request object
 			template.FuncMap{
 				"csrfField": func() string {
 					return ""
 				},
 				"getFlashedMessages": func() *Flash {
 					return &Flash{}
+				},
+				"isActive": func() string {
+					return ""
 				},
 			},
 		},

@@ -64,6 +64,10 @@ func (u *UserService) Insert(username, email, password string) error {
 	return err
 }
 
+func (u *UserService) Update() error {
+	return nil
+}
+
 // GetById returns the User struct or nil if no user matching the id has not
 // been found.
 func (u *UserService) GetById(id int) *User {

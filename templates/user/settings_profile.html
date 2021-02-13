@@ -1,0 +1,42 @@
+<div class="row gutters-sm">
+    {{partial "user/_settings_navigation"}}
+
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body tab-content">
+                <div class="tab-pane active" id="profile">
+                    <form method="POST" action="/user/settings">
+                        {{ csrfField }}
+                        <h5>Your Profile Information</h5>
+                        <hr>
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter your full name">
+                            <div class="form-text">Your name may appear around here where you are mentioned.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Your Bio</label>
+                            <textarea class="form-control" id="bio" name="bio" placeholder="Write something about you" style="resize: none; height: 62px;"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="url" class="form-label">Website</label>
+                            <input type="text" class="form-control" id="website" name="website" placeholder="Enter your website address" value="">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="Enter your location" value="">
+                        </div>
+                        <div class="mb-3 small text-muted">
+                            All of the fields on this page are optional and can be deleted at any time, and by filling them out, you're giving us consent to share this data wherever your user profile appears.
+                        </div>
+                        <button class="btn btn-primary">Update Profile</button>
+                        <button type="reset" class="btn btn-dark">Reset Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

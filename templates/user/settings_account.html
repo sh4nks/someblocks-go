@@ -1,0 +1,45 @@
+<div class="row gutters-sm">
+    {{partial "user/_settings_navigation"}}
+
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body tab-content">
+                <div class="tab-pane active" id="account">
+                    <h5>Account Settings</h5>
+                    <hr>
+
+                    <form method="POST" action="">
+                        {{ csrfField }}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" value="{{.CurrentUser.Username}}">
+                            <div class="form-text">After changing your username, your old username becomes available for anyone else to claim.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your email" value="{{.CurrentUser.Email}}">
+                            <div class="form-text">You need to confirm your <strong>new email address</strong> on your <strong>old email account</strong> as well before your new email address is verified.</div>
+                        </div>
+
+                        <button class="btn btn-primary" type="button">Update</button>
+                    </form>
+
+                    <hr class="mt-4">
+
+                    <form method="POST" action="">
+                        {{ csrfField }}
+
+                        <div class="mb-3">
+                            <label class="d-block text-danger">Delete Account</label>
+                            <p class="form-text font-size-sm">Once you delete your account, there is no going back. Please be certain.</p>
+                        </div>
+                        <button class="btn btn-danger" type="button">Delete Account</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

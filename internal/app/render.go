@@ -33,9 +33,16 @@ func (app *App) HTML(w http.ResponseWriter, r *http.Request, tmpl string, data D
 				}
 				return nil
 			},
+			"isActive": func(endpoint string) template.HTML {
+				if r.URL != nil && r.URL.String() == endpoint {
+					return "active"
+				}
+				return ""
+			},
 		},
 	}
 
 	data["CurrentUser"] = context.CurrentUser(r.Context())
+	data["RequestEndpoint"] = r.URL.String()
 	app.Render.HTML(w, http.StatusOK, tmpl, data, htmlOpts)
 }

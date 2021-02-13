@@ -1,0 +1,69 @@
+<div class="row gutters-sm">
+    {{partial "user/_settings_navigation"}}
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-body tab-content">
+                <div class="tab-pane active" id="security">
+                    <form class="mt-2">
+                        <h5>Change password</h5>
+                        <hr>
+                        <div class="mb-1 mt-1">
+                            <label class="form-label">Old password</label>
+                            <input type="text" class="form-control" placeholder="Enter your old password" required>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label">New password</label>
+                            <input type="text" class="form-control" placeholder="Enter your new password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm new password</label>
+                            <input type="text" class="form-control" placeholder="Enter your new password again" required>
+                            <div class="form-text">Changing your password will invalidate all of your sessions.</div>
+                        </div>
+                        <button class="btn btn-primary">Update password</button>
+                    </form>
+
+                    <form class="mt-5">
+                        {{ csrfField }}
+                        <h5>Two Factor Authentication</h5>
+                        <hr>
+                        <div class="mb-3">
+                            <button class="btn btn-info" type="button">Enable two-factor authentication</button>
+                            <p class="small text-muted mt-2">Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in.</p>
+                        </div>
+                    </form>
+
+                    <form class="mt-5">
+                        <h5>Sessions</h5>
+                        <hr>
+                        <div class="form-group mb-0">
+                            <p class="font-size-sm text-secondary">This is a list of devices that have logged into your account. Revoke any sessions that you do not recognize.</p>
+                            <ul class="list-group list-group-sm">
+                                <li class="list-group-item has-icon bg-dark">
+                                    <div class="row">
+                                    <div class="col">
+                                        <div class="mb-0 h6">Firefox (Linux) - Leoben, Austria - 127.0.0.1</div>
+                                        <div class="lh-1">
+                                            <small class="text-muted">Last active: <span class="text-success">now</span></small>
+                                        </div>
+
+                                        <div class="lh-1">
+                                            <small class="text-muted">Seen in Austria</small>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <button class="btn btn-danger btn-sm ms-auto" type="button">Revoke</button>
+                                    </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

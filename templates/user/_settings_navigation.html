@@ -1,0 +1,26 @@
+{{define "user/_settings_navigation"}}
+<div class="col-md-4 d-none d-md-block">
+    <div class="card">
+        <div class="card-body">
+            <div class="nav flex-column nav-pills me-3" role="tablist">
+                <a class="nav-link {{isActive "/user/settings"}}" href="/user/settings" role="tab">
+                    <svg class="feather me-1"><use xlink:href="/static/feather-sprite.svg#user"/></svg>
+                    Profile Information
+                </a>
+                <a class="nav-link {{isActive "/user/settings/account"}}" href="/user/settings/account" role="tab">
+                    <svg class="feather me-1"><use xlink:href="/static/feather-sprite.svg#settings"/></svg>
+                    Account Settings
+                </a>
+                <a class="nav-link {{isActive "/user/settings/security"}}" href="/user/settings/security" role="tab">
+                    <svg class="feather me-1"><use xlink:href="/static/feather-sprite.svg#shield"/></svg>
+                    Security
+                </a>
+                <a class="nav-link {{isActive "/user/settings/notification"}}" href="/user/settings/notification" role="tab">
+                    <svg class="feather me-1"><use xlink:href="/static/feather-sprite.svg#bell"/></svg>
+                    Notification
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

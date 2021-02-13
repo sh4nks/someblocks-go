@@ -72,11 +72,7 @@ func New(cfg *config.Config) *Server {
 	router.Get("/auth/register", authController.Register)
 	router.Post("/auth/register", authController.RegisterPost)
 
-	router.Route("/user", func(subRouter chi.Router) {
-		subRouter.Use(userMw.LoginRequired)
-		subRouter.Get("/profile", userController.UserProfile)
-		subRouter.Get("/settings", userController.UserSettings)
-	})
+	router.Mount("/user", userController.Routes(userMw))
 
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.
