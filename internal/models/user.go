@@ -2,25 +2,23 @@ package models
 
 import (
 	"database/sql"
-	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID         int          `db:"id"`
-	Email      string       `db:"email"`
-	Username   string       `db:"username"`
-	Password   []byte       `db:"password"`
-	LastLogin  sql.NullTime `db:"last_login"`
-	CreatedAt  time.Time    `db:"created_at"`
-	ModifiedAt time.Time    `db:"modified_at"`
+	BaseModel
+	ID        int    `gorm:"primarykey"`
+	Email     string `gorm:"unique;size:254"` // emails should not exceed 254 characters
+	Username  string `gorm:"unique;size:128"`
+	Password  []byte `gorm:"size:256"`
+	LastLogin sql.NullTime
 }
 
 type UserService struct {
-	DB *sqlx.DB
+	DB *gorm.DB
 }
 
 // Authenticate is used to verify whether a user exists with
@@ -43,28 +41,32 @@ func (u *UserService) Authenticate(email, password string) (int, error) {
 	return user.ID, nil
 }
 
-func (u *UserService) Insert(username, email, password string) error {
+func (u *UserService) Insert(username, email, password string) (*User, error) {
 	// 2^12 = 4096
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = u.DB.NamedExec(`
-		INSERT INTO users (
-			username, email, password
-		) VALUES (
-			:username, :email, :password
-		)`,
-		User{
-			Username: username,
-			Email:    email,
-			Password: hashedPassword,
-		})
-	return err
+	user := User{
+		Username: username,
+		Email:    email,
+		Password: hashedPassword,
+	}
+
+	result := u.DB.Create(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
 }
 
-func (u *UserService) Update() error {
+func (u *UserService) Update(user *User) error {
+	result := u.DB.Save(user)
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }
 
@@ -72,11 +74,11 @@ func (u *UserService) Update() error {
 // been found.
 func (u *UserService) GetById(id int) *User {
 	user := User{}
-	err := u.DB.Get(&user, "SELECT * FROM users WHERE id = ?", id)
-	if err == sql.ErrNoRows {
+	result := u.DB.First(&user, id)
+	if result.Error == gorm.ErrRecordNotFound {
 		return nil
-	} else if err != nil {
-		log.Error().Err(err).Msg("UserService.GetById:")
+	} else if result.Error != nil {
+		log.Error().Err(result.Error).Msg("UserService.GetById:")
 		return nil
 	}
 	return &user
@@ -84,11 +86,11 @@ func (u *UserService) GetById(id int) *User {
 
 func (u *UserService) GetByUsername(username string) *User {
 	user := User{}
-	err := u.DB.Get(&user, "SELECT * FROM users WHERE username = ?", username)
-	if err == sql.ErrNoRows {
+	result := u.DB.Where("username = ?", username).First(&user)
+	if result.Error == gorm.ErrRecordNotFound {
 		return nil
-	} else if err != nil {
-		log.Error().Err(err).Msg("UserService.GetByUsername:")
+	} else if result.Error != nil {
+		log.Error().Err(result.Error).Msg("UserService.GetByUsername:")
 		return nil
 	}
 	return &user
@@ -96,11 +98,11 @@ func (u *UserService) GetByUsername(username string) *User {
 
 func (u *UserService) GetByEmail(email string) *User {
 	user := User{}
-	err := u.DB.Get(&user, "SELECT * FROM users WHERE email = ?", email)
-	if err == sql.ErrNoRows {
+	result := u.DB.Where("email = ?", email).First(&user)
+	if result.Error == gorm.ErrRecordNotFound {
 		return nil
-	} else if err != nil {
-		log.Error().Err(err).Msg("UserService.GetByEmail:")
+	} else if result.Error != nil {
+		log.Error().Err(result.Error).Msg("UserService.GetByEmail:")
 		return nil
 	}
 	return &user

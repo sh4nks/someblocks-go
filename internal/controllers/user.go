@@ -50,7 +50,7 @@ func (c *UserController) SettingsProfileUpdate(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	c.userService.Update()
+	//c.userService.Update()
 
 	c.app.Flash(r, "Profile updated!", "success")
 	http.Redirect(w, r, "/user/settings/profile", http.StatusSeeOther)

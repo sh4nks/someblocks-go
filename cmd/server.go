@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"someblocks/internal/server"
+	"os"
 	"someblocks/internal/config"
+	"someblocks/internal/server"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
@@ -11,6 +12,9 @@ import (
 
 func runServer(cfg *config.Config) {
 	srv := server.New(cfg)
+	if srv == nil {
+		os.Exit(1)
+	}
 	srv.Start()
 }
 

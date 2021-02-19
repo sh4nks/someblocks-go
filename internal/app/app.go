@@ -6,13 +6,13 @@ import (
 
 	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
-	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/unrolled/render"
+	"gorm.io/gorm"
 )
 
 type App struct {
-	DB      *sqlx.DB
+	DB      *gorm.DB
 	Session *SessionManager
 	Render  *render.Render
 }
@@ -21,7 +21,7 @@ func init() {
 	gob.Register(Flash{})
 }
 
-func New(db *sqlx.DB) *App {
+func New(db *gorm.DB) *App {
 	// Setup "Template Engine" AKA renderer
 	render := render.New(render.Options{
 		RenderPartialsWithoutPrefix: true,
@@ -49,7 +49,8 @@ func New(db *sqlx.DB) *App {
 	sessionManager := &SessionManager{
 		*scs.New(),
 	}
-	sessionManager.Store = sqlite3store.New(db.DB)
+	sqlDB, _ := db.DB()
+	sessionManager.Store = sqlite3store.New(sqlDB)
 
 	return &App{
 		DB:      db,

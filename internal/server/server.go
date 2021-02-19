@@ -10,6 +10,7 @@ import (
 	"someblocks/internal/app"
 	"someblocks/internal/config"
 	"someblocks/internal/controllers"
+	"someblocks/internal/database"
 	"someblocks/internal/middleware"
 	"someblocks/internal/models"
 	"someblocks/pkg/utils"
@@ -31,7 +32,12 @@ type Server struct {
 }
 
 func New(cfg *config.Config) *Server {
-	db := models.SetupAndMigrate(cfg)
+	db, err := database.SetupAndMigrate(cfg)
+	if err != nil {
+		log.Error().Err(err).Msg("Couldn't setup database")
+		return nil
+	}
+
 	app := app.New(db)
 
 	csrfMiddleware := csrf.Protect(
@@ -53,8 +59,8 @@ func New(cfg *config.Config) *Server {
 	userService := models.UserService{DB: db}
 
 	authController := controllers.NewAuthController(app, &userService)
+	userController := controllers.NewUserController(app, &userService)
 	pageController := controllers.NewPageController(app)
-	userController := controllers.NewUserController(app)
 
 	userMw := middleware.NewUserMiddleware(app, &userService)
 	router.Use(userMw.CurrentUser)

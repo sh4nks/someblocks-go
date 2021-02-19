@@ -1,10 +1,6 @@
 database:
-  driver: sqlite3
-  host: localhost
-  port: 5432
-  dbname: someblocks.sqlite
-  username: 'peter'
-  password: ''
+  driver: sqlite
+  url: someblocks.sqlite
 
 web:
   port: 8000

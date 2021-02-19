@@ -24,12 +24,8 @@ map[string]interface{}{
 */
 
 type Database struct {
-	Driver   string `mapstructure:"driver"`
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Dbname   string `mapstructure:"dbname"`
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
+	Driver string `mapstructure:"driver"`
+	URL    string `mapstructure:"url"`
 }
 
 type Web struct {
@@ -52,11 +48,8 @@ type Config struct {
 
 var Cfg = &Config{
 	Database: Database{
-		Driver:   "sqlite3",
-		Dbname:   "someblocks.sqlite",
-		Host:     "",
-		Username: "",
-		Password: "",
+		Driver: "sqlite",
+		URL:    "someblocks.sqlite",
 	},
 	Web: Web{
 		Host: "127.0.0.1",
