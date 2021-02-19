@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"net/http"
-	"someblocks/internal/app"
-	"someblocks/internal/context"
+	"someblocks/app"
+	"someblocks/context"
 
 	"github.com/go-chi/chi"
 )

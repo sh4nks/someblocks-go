@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"someblocks/internal/config"
-	"someblocks/pkg/utils"
+	"someblocks/config"
+	"someblocks/utils"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

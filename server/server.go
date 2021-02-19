@@ -7,13 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"someblocks/internal/app"
-	"someblocks/internal/config"
-	"someblocks/internal/controllers"
-	"someblocks/internal/database"
-	"someblocks/internal/middleware"
-	"someblocks/internal/models"
-	"someblocks/pkg/utils"
+	"someblocks/app"
+	"someblocks/config"
+	"someblocks/controllers"
+	"someblocks/database"
+	"someblocks/middleware"
+	"someblocks/models"
+	"someblocks/utils"
 
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
@@ -82,7 +82,7 @@ func New(cfg *config.Config) *Server {
 
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.
-	filesDir := filepath.Join(utils.GetExecDir(), "static")
+	filesDir := filepath.Join(utils.GetExecDir(), "ui", "dist")
 	FileServer(router, "/static/", filesDir)
 
 	return &Server{

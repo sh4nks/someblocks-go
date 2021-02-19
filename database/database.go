@@ -5,9 +5,9 @@ import (
     "net/url"
 
     "path/filepath"
-    "someblocks/internal/config"
-    "someblocks/internal/models"
-    "someblocks/pkg/utils"
+    "someblocks/config"
+    "someblocks/models"
+    "someblocks/utils"
 
     "gorm.io/driver/postgres"
     "gorm.io/driver/sqlite"

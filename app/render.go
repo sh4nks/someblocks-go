@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/csrf"
 	"github.com/unrolled/render"
-	"someblocks/internal/context"
+	"someblocks/context"
 )
 
 // D stands for Data and is a shortcut for map[string]interface{}

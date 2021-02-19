@@ -3,9 +3,10 @@ package app
 import (
 	"encoding/gob"
 	"html/template"
+	"someblocks/app/gormstore"
 
-	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"github.com/unrolled/render"
 	"gorm.io/gorm"
@@ -49,8 +50,12 @@ func New(db *gorm.DB) *App {
 	sessionManager := &SessionManager{
 		*scs.New(),
 	}
-	sqlDB, _ := db.DB()
-	sessionManager.Store = sqlite3store.New(sqlDB)
+
+	store, err := gormstore.New(db)
+	if err != nil {
+		log.Fatal().Msg("Error while migrating the session store")
+	}
+	sessionManager.Store = store
 
 	return &App{
 		DB:      db,

@@ -2,8 +2,8 @@ package forms
 
 import (
 	"net/url"
-	"someblocks/internal/config"
-	"someblocks/internal/models"
+	"someblocks/config"
+	"someblocks/models"
 )
 
 type LoginForm struct {
@@ -70,3 +70,6 @@ func (f *RegisterForm) Valid(us *models.UserService) bool {
 
 	return len(f.Errors) == 0
 }
+
+//https://github.com/gookit/validate
+//https://github.com/go-ozzo/ozzo-validation

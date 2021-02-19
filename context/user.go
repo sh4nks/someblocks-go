@@ -3,7 +3,7 @@ package context
 import (
 	"context"
 
-	"someblocks/internal/models"
+	"someblocks/models"
 )
 
 const (

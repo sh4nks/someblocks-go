@@ -13,8 +13,8 @@ module.exports = {
     },
     output: {
         filename: "[name].js",
-        publicPath: "/static/",
-        path: path.resolve("../static/")
+        publicPath: "./dist/",
+        path: path.resolve("./dist/")
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json"],

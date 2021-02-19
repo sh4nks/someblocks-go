@@ -2,7 +2,7 @@ package forms
 
 import (
 	"net/url"
-	"someblocks/internal/models"
+	"someblocks/models"
 )
 
 type ProfileForm struct {

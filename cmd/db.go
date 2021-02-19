@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"someblocks/internal/config"
-	"someblocks/internal/database"
+	"someblocks/config"
+	"someblocks/database"
 
 	"github.com/spf13/cobra"
 )

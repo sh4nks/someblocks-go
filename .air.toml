@@ -2,4 +2,4 @@
 full_bin = "./someblocks server"
 cmd = "go build -o ./someblocks ."
 bin = "someblocks"
-exclude_dir = ["frontend", "assets", "tmp", "vendor", "static", "templates"]
+exclude_dir = ["frontend", "assets", "tmp", "vendor", "static", "templates", "ui"]

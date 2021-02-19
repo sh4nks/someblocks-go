@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"os"
-	"someblocks/internal/config"
-	"someblocks/internal/server"
+	"someblocks/config"
+	"someblocks/server"
 
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"

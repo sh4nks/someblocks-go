@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"net/http"
-	"someblocks/internal/app"
-	"someblocks/internal/context"
-	"someblocks/internal/models"
+	"someblocks/app"
+	"someblocks/context"
+	"someblocks/models"
 	"strings"
 )
 

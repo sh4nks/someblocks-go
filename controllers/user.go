@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"someblocks/internal/app"
-	"someblocks/internal/forms"
-	"someblocks/internal/middleware"
-	"someblocks/internal/models"
+	"someblocks/app"
+	"someblocks/forms"
+	"someblocks/middleware"
+	"someblocks/models"
 
 	"github.com/go-chi/chi"
 )
