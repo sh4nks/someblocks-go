@@ -1,3 +1,3 @@
-# peterjustin-website
+# someblocks
 
-Lets rewrite it in Go!
+A simple CMS written in Go.
