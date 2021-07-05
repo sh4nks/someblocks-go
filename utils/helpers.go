@@ -1,23 +1,9 @@
 package utils
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
-)
-
-const (
-	ColorBlack = iota + 30
-	ColorRed
-	ColorGreen
-	ColorYellow
-	ColorBlue
-	ColorMagenta
-	ColorCyan
-	ColorWhite
-
-	ColorBold     = 1
-	ColorDarkGray = 90
 )
 
 func GetExecDir() string {
@@ -36,12 +22,9 @@ func GetExecDir() string {
 	return dirAbsPath
 }
 
-// colorize returns the string s wrapped in ANSI code c, unless disabled is true.
-func Colorize(s interface{}, c int, disabled bool) string {
-	if disabled {
-		return fmt.Sprintf("%s", s)
-	}
-	return fmt.Sprintf("\x1b[%dm%v\x1b[0m", c, s)
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	return !errors.Is(err, os.ErrNotExist)
 }
 
 // Merges maps (duplicate keys will be overwritten!)

@@ -43,7 +43,7 @@ func NewWithCleanupInterval(db *gorm.DB, cleanupInterval time.Duration) (*GORMSt
 	return p, nil
 }
 
-// Find returns the data for a given session token from the PostgresStore instance.
+// Find returns the data for a given session token from the GORMStore instance.
 // If the session token is not found or is expired, the returned exists flag will
 // be set to false.
 func (p *GORMStore) Find(token string) ([]byte, bool, error) {
@@ -55,7 +55,7 @@ func (p *GORMStore) Find(token string) ([]byte, bool, error) {
 	return row.Data, true, nil
 }
 
-// Commit adds a session token and data to the PostgresStore instance with the
+// Commit adds a session token and data to the GORMStore instance with the
 // given expiry time. If the session token already exists, then the data and expiry
 // time are updated.
 func (p *GORMStore) Commit(token string, b []byte, expiry time.Time) error {
@@ -67,7 +67,7 @@ func (p *GORMStore) Commit(token string, b []byte, expiry time.Time) error {
 	return nil
 }
 
-// Delete removes a session token and corresponding data from the PostgresStore
+// Delete removes a session token and corresponding data from the GORMStore
 // instance.
 func (p *GORMStore) Delete(token string) error {
 	result := p.db.Delete(&session{}, "token = ?", token)
