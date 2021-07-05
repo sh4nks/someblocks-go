@@ -4,21 +4,18 @@ go 1.15
 
 require (
 	github.com/alexedwards/scs/v2 v2.4.1-0.20201122155747-696f8e8a5fe2
-	github.com/go-chi/chi v1.5.1
+	github.com/go-chi/chi v1.5.4
 	github.com/gorilla/csrf v1.7.0
-	github.com/lib/pq v1.9.0
+	github.com/lib/pq v1.10.2
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
-	github.com/mitchellh/mapstructure v1.4.0
-	github.com/rs/zerolog v1.20.0
-	github.com/spf13/cobra v1.1.1
-	github.com/spf13/viper v1.7.1
-	github.com/unrolled/render v1.0.3
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
-	golang.org/x/sys v0.0.0-20201029080932-201ba4db2418 // indirect
-	golang.org/x/text v0.3.4 // indirect
-	gopkg.in/ini.v1 v1.62.0 // indirect
+	github.com/mitchellh/mapstructure v1.4.1
+	github.com/rs/zerolog v1.23.0
+	github.com/spf13/cobra v1.2.1
+	github.com/spf13/viper v1.8.1
+	github.com/unrolled/render v1.4.0
+	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/postgres v1.0.8
+	gorm.io/driver/postgres v1.1.0
 	gorm.io/driver/sqlite v1.1.4
-	gorm.io/gorm v1.20.12
+	gorm.io/gorm v1.21.11
 )
