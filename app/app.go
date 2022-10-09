@@ -3,8 +3,8 @@ package app
 import (
 	"encoding/gob"
 	"html/template"
-	"someblocks/app/gormstore"
 
+	"github.com/alexedwards/scs/gormstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"

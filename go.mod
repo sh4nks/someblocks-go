@@ -3,6 +3,7 @@ module someblocks
 go 1.19
 
 require (
+	github.com/alexedwards/scs/gormstore v0.0.0-20220528130143-d93ace5be94b
 	github.com/alexedwards/scs/v2 v2.5.0
 	github.com/go-chi/chi v1.5.4
 	github.com/gorilla/csrf v1.7.1
