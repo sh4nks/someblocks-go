@@ -38,12 +38,13 @@ type App struct {
 }
 
 type Config struct {
-	Database  Database `mapstructure:"database"`
-	Web       Web      `mapstructure:"web"`
-	App       App      `mapstructure:"app"`
-	Logfile   string   `mapstructure:"logfile"`
-	SecretKey string   `mapstructure:"secretkey"`
-	Debug     bool     `mapstructure:"debug"`
+	Database       Database `mapstructure:"database"`
+	Web            Web      `mapstructure:"web"`
+	App            App      `mapstructure:"app"`
+	Logfile        string   `mapstructure:"logfile"`
+	SecretKey      string   `mapstructure:"secretkey"`
+	TrustedOrigins []string `mapstructure:"trustedorigins"`
+	Debug          bool     `mapstructure:"debug"`
 }
 
 var Cfg = &Config{
@@ -58,9 +59,10 @@ var Cfg = &Config{
 	App: App{
 		PasswordMinLength: 8,
 	},
-	Logfile:   "someblocks.log",
-	SecretKey: makeSecretKey(32),
-	Debug:     false,
+	Logfile:        "someblocks.log",
+	SecretKey:      makeSecretKey(32),
+	TrustedOrigins: []string{"localhost:8000", "127.0.0.1:8000"},
+	Debug:          false,
 }
 
 func loadDefaultConfig() error {

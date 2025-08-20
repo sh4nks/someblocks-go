@@ -5,7 +5,7 @@ import (
 	"someblocks/app"
 	"someblocks/context"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 func NewPageController(app *app.App) *PageController {

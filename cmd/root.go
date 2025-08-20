@@ -44,6 +44,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(serverCmd(config.Cfg))
 	rootCmd.AddCommand(dbCmd(config.Cfg))
+	rootCmd.AddCommand(userCmd(config.Cfg))
 	rootCmd.AddCommand(configCmd(config.Cfg))
 
 	noColor := false

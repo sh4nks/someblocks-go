@@ -15,8 +15,8 @@ import (
 	"someblocks/models"
 	"someblocks/utils"
 
-	"github.com/go-chi/chi"
-	chiMiddleware "github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/csrf"
 	"github.com/rs/zerolog/log"
 )
@@ -42,7 +42,8 @@ func New(cfg *config.Config) *Server {
 
 	csrfMiddleware := csrf.Protect(
 		[]byte(cfg.SecretKey),
-		csrf.Secure(cfg.Debug),
+		csrf.Secure(!cfg.Debug),
+		csrf.TrustedOrigins(cfg.TrustedOrigins),
 		csrf.Path("/"),
 	)
 
@@ -57,9 +58,9 @@ func New(cfg *config.Config) *Server {
 	)
 
 	userService := models.UserService{DB: db}
-
 	authController := controllers.NewAuthController(app, &userService)
 	userController := controllers.NewUserController(app, &userService)
+	adminController := controllers.NewAdminController(app, &userService)
 	pageController := controllers.NewPageController(app)
 
 	userMw := middleware.NewUserMiddleware(app, &userService)
@@ -79,6 +80,7 @@ func New(cfg *config.Config) *Server {
 	router.Post("/auth/register", authController.RegisterPost)
 
 	router.Mount("/user", userController.Routes(userMw))
+	router.Mount("/admin", adminController.Routes(userMw))
 
 	// Setup static files /static route that will serve the static files from
 	// from the ./static/ folder.

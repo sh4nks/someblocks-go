@@ -7,7 +7,7 @@ import (
 	"someblocks/middleware"
 	"someblocks/models"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 func NewUserController(app *app.App, userService *models.UserService) *UserController {

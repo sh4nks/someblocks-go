@@ -14,6 +14,7 @@ type User struct {
 	Email     string `gorm:"unique;size:254"` // emails should not exceed 254 characters
 	Username  string `gorm:"unique;size:128"`
 	Password  []byte `gorm:"size:256"`
+	Role      string `gorm:"size:128"`
 	LastLogin sql.NullTime
 }
 
@@ -52,6 +53,7 @@ func (u *UserService) Insert(username, email, password string) (*User, error) {
 		Username: username,
 		Email:    email,
 		Password: hashedPassword,
+		Role:     "user",
 	}
 
 	result := u.DB.Create(&user)
@@ -63,11 +65,51 @@ func (u *UserService) Insert(username, email, password string) (*User, error) {
 }
 
 func (u *UserService) Update(user *User) error {
-	result := u.DB.Save(user)
+	result := u.DB.Model(&user).Select("*").Omit("password", "role").Updates(User{Username: user.Username, Email: user.Email})
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
+}
+
+func (u *UserService) UpdatePassword(user *User, password string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	if err != nil {
+		return err
+	}
+	user.Password = hashedPassword
+	// result := u.DB.Select("password").Updates(user)
+	result := u.DB.Model(&user).Select("password").Where("username = ?", user.Username).Updates(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (u *UserService) UpdateRole(user *User, role string) error {
+	user.Role = role
+	result := u.DB.Model(&user).Select("role").Where("username = ?", user.Username).Updates(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (u *UserService) Search(username string, resultSize int) []User {
+	var result *gorm.DB
+	var users []User
+	if len(username) > 0 {
+		log.Debug().Msgf("searching for 'username' LIKE ", username)
+		result = u.DB.Where("username LIKE ?", username).Find(&users)
+	} else {
+		log.Debug().Msgf("searching for all users")
+		result = u.DB.Find(&users)
+	}
+
+	if result.Error != nil {
+		log.Error().Err(result.Error).Msg("UserService.Search:")
+	}
+	return users
 }
 
 // GetById returns the User struct or nil if no user matching the id has not

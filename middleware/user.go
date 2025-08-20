@@ -61,3 +61,15 @@ func (mw *User) LoginRequired(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// LoginRequired assumes that CurrentUser middleware has already been run
+// otherwise it will no work correctly.
+func (mw *User) AdminRequired(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := context.CurrentUser(r.Context())
+		if user == nil || user.Role != "admin" {
+			http.Redirect(w, r, "/", http.StatusForbidden)
+		}
+		next.ServeHTTP(w, r)
+	})
+}
